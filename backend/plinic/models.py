@@ -22,7 +22,7 @@ class Genre(TimeStampedModel):
 class Playlist(TimeStampedModel):
     title = models.CharField(max_length=150)
     url = models.URLField()
-    thumbnail = models.ImageField(blank=True, upload_to="plinic/thumbnails/%Y/%m/%d")
+    thumbnail = models.ImageField(blank=True)
     profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="playlist_profile_set")
     genre = models.ForeignKey("Genre", on_delete=models.CASCADE)
     is_public = models.BooleanField(default=True)
@@ -38,7 +38,7 @@ class Post(TimeStampedModel):
     content = models.CharField(max_length=300)
     playlist = models.ForeignKey("Playlist", on_delete=models.CASCADE)
     voter_set = models.ManyToManyField("accounts.Profile", related_name="voter_set")
-    tag_set = models.ManyToManyField("Tag")
+    tag_set = models.ManyToManyField("Tag", blank=True)
 
     def __str__(self):
         return f'{self.pk}:{self.title}'
