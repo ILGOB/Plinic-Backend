@@ -17,7 +17,7 @@ class TimeStampedModel(models.Model):
 class Profile(TimeStampedModel):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     nickname = models.CharField(max_length=150, unique=True, null=True)
-    profile_pic = models.ImageField(null=True)
+    profile_pic = models.ImageField(null=True, blank=True, upload_to="plinic/profile_pic/%Y/%m/%d")
 
     def __str__(self):
         return f'{self.pk}:{self.user.username} Profile'
