@@ -26,7 +26,7 @@ class Playlist(TimeStampedModel):
     profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="playlist_profile_set")
     genre = models.ForeignKey("Genre", on_delete=models.CASCADE)
     is_public = models.BooleanField(default=True)
-    scrapper_set = models.ManyToManyField("accounts.Profile", related_name="playlist_scrapper_set")
+    scrapper_set = models.ManyToManyField("accounts.Profile", related_name="playlist_scrapper_set", blank=True)
 
     def __str__(self):
         return f'{self.pk}:{self.title}'
