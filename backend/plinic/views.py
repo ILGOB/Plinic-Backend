@@ -4,19 +4,23 @@ from . import youtube as yt
 from . import youtube_duration as yd
 import requests
 
+
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
 class random_playlist_view(APIView):
+
     def get(self, request):
         if not 'genre' in request.GET:
             pass
 
         genre = request.GET['genre']
+        num = request.GET['num']
         print(genre)
 
-        get_namelist = spotty.get_recommendation_name(genre, 3)  # 얕은카피
+        get_namelist = spotty.get_recommendation_name(genre, num)  # 얕은카피
 
         counter = 1
 
@@ -30,8 +34,8 @@ class random_playlist_view(APIView):
         for i in namelist_keys:
             songList = []
 
-            # key값인 아티스트의 이름과
-            temp = yt.youtube_search_list(i + " +" + get_namelist[i])
+            # key값인 아티스트의 이름과 value인 노래 제목을 더하여 검색
+            temp = yt.youtube_search_list(get_namelist[i] + i)
             tempList = list(map(str, temp.split()))
 
             # 제목과 url을 songList에 담음
