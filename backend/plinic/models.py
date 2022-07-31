@@ -26,7 +26,7 @@ class Playlist(TimeStampedModel):
     profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="playlist_profile_set")
     genre = models.ForeignKey("Genre", on_delete=models.CASCADE)
     is_public = models.BooleanField(default=True)
-    scrapper_set = models.ManyToManyField("accounts.Profile", related_name="playlist_scrapper_set")
+    scrapper_set = models.ManyToManyField("accounts.Profile", related_name="playlist_scrapper_set", blank=True)
 
     def __str__(self):
         return f'{self.pk}:{self.title}'
@@ -37,7 +37,7 @@ class Post(TimeStampedModel):
     title = models.CharField(max_length=30)
     content = models.CharField(max_length=300)
     playlist = models.ForeignKey("Playlist", on_delete=models.CASCADE)
-    voter_set = models.ManyToManyField("accounts.Profile", related_name="voter_set")
+    voter_set = models.ManyToManyField("accounts.Profile", related_name="voter_set", blank=True)
     tag_set = models.ManyToManyField("Tag", blank=True)
 
     def __str__(self):
