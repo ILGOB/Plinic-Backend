@@ -28,6 +28,7 @@ def get_recommendation_name(genre, limit):
         # pprint.pprint("-"*100)
 
         outPut.setdefault(artist_name, track_name)
+        print(outPut)
     return outPut
 
 

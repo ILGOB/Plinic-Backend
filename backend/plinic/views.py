@@ -21,6 +21,7 @@ class random_playlist_view(APIView):
         num = request.GET['num']
         print(genre)
 
+        # 플레이리스트 메이킹 함수 시작
         get_namelist = spotty.get_recommendation_name(genre, num)  # 얕은카피
 
         counter = 1
@@ -38,7 +39,9 @@ class random_playlist_view(APIView):
             tempdict = dict()
 
             # key값인 아티스트의 이름과 value인 노래 제목을 더하여 검색
-            temp = yt.youtube_search_list(get_namelist[i] + i)
+            print(get_namelist[i] + " " + i)
+            temp = yt.youtube_search_list(get_namelist[i] + " " + i)
+            print(temp)
             tempList = list(map(str, temp.split()))
 
             # 제목과 url을 songList에 담음
