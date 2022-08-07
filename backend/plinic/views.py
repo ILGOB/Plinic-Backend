@@ -19,7 +19,7 @@ class random_playlist_view(APIView):
 
         genre = request.GET['genre']
         num = request.GET['num']
-        print(genre)
+        # print(genre)
 
         # 플레이리스트 메이킹 함수 시작
         get_namelist = spotty.get_recommendation_name(genre, num)  # 얕은카피
@@ -32,23 +32,20 @@ class random_playlist_view(APIView):
         songList = []
         list_by_dict = dict()
 
-        print(get_namelist)
-        print(namelist_keys)
+        # print(get_namelist)
+        # print(namelist_keys)
 
         for i in namelist_keys:
             tempdict = dict()
 
             # key값인 아티스트의 이름과 value인 노래 제목을 더하여 검색
-            print(get_namelist[i] + " " + i)
             temp = yt.youtube_search_list(get_namelist[i] + " " + i)
-            print(temp)
             tempList = list(map(str, temp.split()))
 
-            # 제목과 url을 songList에 담음
+            # 제목을 songList에 담음
             # songList.append(get_namelist[i])
             # songList.append(tempList[-1])
             tempdict["title"] = get_namelist[i]
-            tempdict["url"] = tempList[-1]
 
             # id 분리 완료
             tempList = list(map(str, tempList[-1].split('/')))
@@ -56,6 +53,7 @@ class random_playlist_view(APIView):
 
             # string값으로 duration을 반환하는 find_duration 함수
             duration = yd.find_duration(tempList[-1])
+            tempdict["url"] = tempList[-1]
 
             # songList.append(duration)
             tempdict["duration"] = duration
@@ -73,7 +71,12 @@ class random_playlist_view(APIView):
 
         list_by_dict["tracks"] = songList
         list_by_dict["Total_urls"] = urls_by_response
-        print(list_by_dict)
+        # print(list_by_dict)
+        tempurl = list(map(str, urls_by_response.split('list=')))
+        print(tempurl)
+        for tempdict in list_by_dict["tracks"]:
+            tempdict["url"] = "https://www.youtube.com/watch?v=" + \
+                tempdict["url"]+"&list="+tempurl[-1]
 
         json_val = JsonResponse(list_by_dict)
 

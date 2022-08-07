@@ -25,7 +25,7 @@ def youtube_search_list(word):
         q=word,
         maxResults=1
     ).execute()
-    print(word)
+    # print(word)
     # print(search_response)
 
     # ?????여기서 갑자기 None값이 나옴 ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ도대체 모르겠네~~도대체 모르겠어~~~~~~~~~
@@ -33,10 +33,10 @@ def youtube_search_list(word):
 
     # Print the title and ID of each matching resource.
     for search_result in search_response.get("items", []):
-        print(search_result)
+        # print(search_result)
         # pprint.pprint(search_result['id']['videoId'])
-        print(f'''{search_result['snippet']['title']} 
-        youtube.com/watch?v={search_result['id']['videoId']}''')
+        # print(f'''{search_result['snippet']['title']}
+        # youtube.com/watch?v={search_result['id']['videoId']}''')
         return f'''{search_result['snippet']['title']} 
         youtube.com/watch?v={search_result['id']['videoId']}'''
 
