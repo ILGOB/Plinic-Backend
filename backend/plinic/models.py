@@ -22,7 +22,7 @@ class Genre(TimeStampedModel):
 class Playlist(TimeStampedModel):
     title = models.CharField(max_length=150)
     url = models.URLField()
-    thumbnail = models.ImageField(blank=True)
+    thumbnail = models.ImageField(blank=True, upload_to="thumbnails/%Y/%m/%d")
     profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="playlist_profile_set")
     genre = models.ForeignKey("Genre", on_delete=models.CASCADE)
     is_public = models.BooleanField(default=True)
