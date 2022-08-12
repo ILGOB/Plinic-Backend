@@ -1,10 +1,12 @@
 from googleapiclient.errors import HttpError
 from . import playlist_maker as pl
 
+from django.http import JsonResponse
+from rest_framework.response import Response
 from rest_framework.views import APIView
 # from rest_framework import generics
 from rest_framework.response import Response
-from django.http import JsonResponse
+
 
 
 class random_playlist_view(APIView):
@@ -26,6 +28,6 @@ class random_playlist_view(APIView):
             if int(num) >= 21:
                 return Response("More than 20 songs are not possible.")
             else:
-                json_val = JsonResponse(pl.random_playlist(genre, num))
+                json_val = Response(pl.random_playlist(genre, num))
                 return json_val
         # watch_videos?video_ids=
