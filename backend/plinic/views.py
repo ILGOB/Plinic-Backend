@@ -6,7 +6,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 # from rest_framework import generics
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
+from .models import Post
+from .serializers import PostSerializer
+
+class PostViewSet(ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
 
 class random_playlist_view(APIView):
