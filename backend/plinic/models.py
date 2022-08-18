@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class TimeStampedModel(models.Model):
     '''
     모든 모델의 기본이 되는 TimeStampedModel
@@ -22,7 +23,7 @@ class Genre(TimeStampedModel):
 class Playlist(TimeStampedModel):
     title = models.CharField(max_length=150)
     url = models.URLField()
-    thumbnail = models.ImageField(blank=True)
+    thumbnail = models.ImageField(blank=True, upload_to="thumbnails/%Y/%m/%d")
     profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="playlist_profile_set")
     genre = models.ForeignKey("Genre", on_delete=models.CASCADE)
     is_public = models.BooleanField(default=True)
@@ -46,6 +47,7 @@ class Post(TimeStampedModel):
 
 class Tag(TimeStampedModel):
     name = models.CharField(max_length=30)
+
     def __str__(self):
         return self.name
 
