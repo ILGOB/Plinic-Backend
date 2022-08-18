@@ -1,6 +1,6 @@
 from googleapiclient.errors import HttpError
 from .utils import playlist_maker as pl
-
+from rest_framework import status
 from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -20,7 +20,7 @@ class random_playlist_view(APIView):
 
     def get(self, request):
         if not 'genre' in request.GET or not 'num' in request.GET:
-            return Response("A 'genre' and 'num' is required.")
+            return Response("A 'genre' and 'num' is required.", status=status.HTTP_400_BAD_REQUEST)
 
         else:
             # 장르가 우리가 지정한 장르가 아닐경우 오류메세지 출력
