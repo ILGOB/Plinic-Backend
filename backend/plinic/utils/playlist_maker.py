@@ -58,7 +58,7 @@ def random_playlist(genre, num):
     list_by_dict["Total_urls"] = urls_by_response
     # print(list_by_dict)
     tempurl = list(map(str, urls_by_response.split('list=')))
-    print(tempurl)
+    # print(tempurl)
     for tempdict in list_by_dict["tracks"]:
         tempdict["url"] = "https://www.youtube.com/watch?v=" + \
             tempdict["url"]+"&list="+tempurl[-1]

@@ -23,12 +23,12 @@ def get_recommendation_name(genre, limit):
     for i in range(len(r['tracks'])):
         track_name = r['tracks'][i]['album']['name']
         artist_name = r['tracks'][i]['album']['artists'][0]['name']
-        pprint.pprint(f'Track name : {track_name}')
+        # pprint.pprint(f'Track name : {track_name}')
         # pprint.pprint(f'Artirst Name : {artist_name}')
         # pprint.pprint("-"*100)
 
         outPut.setdefault(artist_name, track_name)
-        print(outPut)
+        # print(outPut)
     return outPut
 
 
