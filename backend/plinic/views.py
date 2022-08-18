@@ -1,5 +1,5 @@
 from googleapiclient.errors import HttpError
-from . import playlist_maker as pl
+from .utils import playlist_maker as pl
 
 from django.http import JsonResponse
 from rest_framework.response import Response
