@@ -20,7 +20,7 @@ class random_playlist_view(APIView):
 
     def get(self, request):
         if not 'genre' in request.GET or not 'num' in request.GET:
-            return Response("A 'genre' and 'num' is required.", status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error" : "A 'genre' and 'num' is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         else:
             # 장르가 우리가 지정한 장르가 아닐경우 오류메세지 출력
@@ -33,7 +33,7 @@ class random_playlist_view(APIView):
             # 노래의 개수가 20개 이상일경우 오류메세지 출력
             num = request.GET['num']
             if int(num) >= 21:
-                return Response("More than 20 songs are not possible.", status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error" : "More than 20 songs are not possible."}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 json_val = Response(pl.random_playlist(genre, num))
                 return json_val
