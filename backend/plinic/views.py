@@ -33,7 +33,7 @@ class random_playlist_view(APIView):
             # 노래의 개수가 20개 이상일경우 오류메세지 출력
             num = request.GET['num']
             if int(num) >= 21:
-                return Response("More than 20 songs are not possible.")
+                return Response("More than 20 songs are not possible.", status=status.HTTP_400_BAD_REQUEST)
             else:
                 json_val = Response(pl.random_playlist(genre, num))
                 return json_val
