@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class TimeStampedModel(models.Model):
     '''
     모든 모델의 기본이 되는 TimeStampedModel
@@ -46,6 +47,7 @@ class Post(TimeStampedModel):
 
 class Tag(TimeStampedModel):
     name = models.CharField(max_length=30)
+
     def __str__(self):
         return self.name
 
