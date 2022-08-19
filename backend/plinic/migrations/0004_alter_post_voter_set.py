@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterField(
             model_name='post',
-            name='voter_set',
-            field=models.ManyToManyField(blank=True, related_name='voter_set', to='accounts.Profile'),
+            name='liker_set',
+            field=models.ManyToManyField(blank=True, related_name='liker_set', to='accounts.Profile'),
         ),
     ]

@@ -66,7 +66,7 @@ class Migration(migrations.Migration):
                 ('playlist', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='plinic.playlist')),
                 ('profile', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='accounts.profile')),
                 ('tag_set', models.ManyToManyField(to='plinic.Tag')),
-                ('voter_set', models.ManyToManyField(related_name='voter_set', to='accounts.Profile')),
+                ('liker_set', models.ManyToManyField(related_name='liker_set', to='accounts.Profile')),
             ],
             options={
                 'abstract': False,
