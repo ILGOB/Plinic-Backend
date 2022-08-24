@@ -17,12 +17,12 @@ class Genre(TimeStampedModel):
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
-        return self.name
+        return f'<Genre : {self.name}>'
 
 
 class Playlist(TimeStampedModel):
     title = models.CharField(max_length=150)
-    url = models.URLField()
+    total_url = models.URLField()
     thumbnail = models.ImageField(blank=True, upload_to="thumbnails/%Y/%m/%d")
     profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="playlist_profile_set")
     genre = models.ForeignKey("Genre", on_delete=models.CASCADE)
@@ -30,7 +30,17 @@ class Playlist(TimeStampedModel):
     scrapper_set = models.ManyToManyField("accounts.Profile", related_name="playlist_scrapper_set", blank=True)
 
     def __str__(self):
-        return f'{self.pk}:{self.title}'
+        return f'<Playlist : {self.title}>'
+
+
+class Track(TimeStampedModel):
+    playlist = models.ForeignKey("Playlist", on_delete=models.CASCADE)
+    title = models.CharField(max_length=150)
+    url = models.URLField()
+    duration = models.DurationField()
+
+    def __str__(self):
+        return f'<Track : {self.title}>'
 
 
 class Post(TimeStampedModel):
@@ -42,14 +52,14 @@ class Post(TimeStampedModel):
     tag_set = models.ManyToManyField("Tag", blank=True)
 
     def __str__(self):
-        return f'{self.pk}:{self.title}'
+        return f'<Post : {self.title}>'
 
 
 class Tag(TimeStampedModel):
     name = models.CharField(max_length=30)
 
     def __str__(self):
-        return self.name
+        return f'<Tag : {self.name}>'
 
 
 class Notice(TimeStampedModel):
