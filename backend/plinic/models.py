@@ -68,4 +68,4 @@ class Notice(TimeStampedModel):
     content = models.TextField()
 
     def __str__(self):
-        return f'{self.pk}:{self.title}'
+        return f'<Notice : {self.title}>'
