@@ -48,7 +48,7 @@ class Post(TimeStampedModel):
     title = models.CharField(max_length=30)
     content = models.CharField(max_length=300)
     playlist = models.ForeignKey("Playlist", on_delete=models.CASCADE)
-    voter_set = models.ManyToManyField("accounts.Profile", related_name="voter_set", blank=True)
+    liker_set = models.ManyToManyField("accounts.Profile", related_name="liker_set", blank=True)
     tag_set = models.ManyToManyField("Tag", blank=True)
 
     def __str__(self):
