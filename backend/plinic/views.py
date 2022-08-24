@@ -11,12 +11,13 @@ from rest_framework.viewsets import ModelViewSet
 from .models import Post
 from .serializers import PostSerializer
 
+
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
 
-class random_playlist_view(APIView):
+class RandomPlayListView(APIView):
 
     def get(self, request):
         if not 'genre' in request.GET or not 'num' in request.GET:
