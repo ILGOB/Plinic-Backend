@@ -11,6 +11,7 @@ from rest_framework.viewsets import ModelViewSet
 from .models import Post
 from .serializers import PostSerializer
 
+
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -20,11 +21,16 @@ class PostViewSet(ModelViewSet):
         context['request'] = self.request
         return context
 
+    def perform_create(self, serializer):
+        serializer.save(profile=self.request.user.profile)
+        return super().perform_create(serializer)
+
+
 class random_playlist_view(APIView):
 
     def get(self, request):
         if not 'genre' in request.GET or not 'num' in request.GET:
-            return Response({"error" : "A 'genre' and 'num' is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "A 'genre' and 'num' is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         else:
             # 장르가 우리가 지정한 장르가 아닐경우 오류메세지 출력
@@ -37,7 +43,7 @@ class random_playlist_view(APIView):
             # 노래의 개수가 20개 이상일경우 오류메세지 출력
             num = request.GET['num']
             if int(num) >= 21:
-                return Response({"error" : "More than 20 songs are not possible."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "More than 20 songs are not possible."}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 json_val = Response(pl.random_playlist(genre, num))
                 return json_val
