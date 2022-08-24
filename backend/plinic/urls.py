@@ -7,6 +7,6 @@ router.register("posts", views.PostViewSet)
 
 urlpatterns = [
 
-    path('random-playlist', views.random_playlist_view.as_view()),
+    path('random-playlist', views.RandomPlayListView.as_view()),
     path("", include(router.urls)),
 ]

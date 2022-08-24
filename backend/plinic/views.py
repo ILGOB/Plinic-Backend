@@ -26,7 +26,7 @@ class PostViewSet(ModelViewSet):
         return super().perform_create(serializer)
 
 
-class random_playlist_view(APIView):
+class RandomPlayListView(APIView):
 
     def get(self, request):
         if not 'genre' in request.GET or not 'num' in request.GET:
