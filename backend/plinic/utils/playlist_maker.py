@@ -11,8 +11,11 @@ def random_playlist(genre, num):
 
     counter = 1
 
+    print(get_namelist)
+
     #key = artist, value = title
     namelist_keys = get_namelist.keys()
+    namelist_values = get_namelist.values()
     list_by_urls = []
     songList = []
     list_by_dict = dict()
@@ -23,30 +26,70 @@ def random_playlist(genre, num):
     for i in namelist_keys:
         tempdict = dict()
 
-        # key값인 아티스트의 이름과 value인 노래 제목을 더하여 검색
+        # value인 노래 제목과 key값인 아티스트 이름을 더하여 검색
         temp = yt.youtube_search_list(get_namelist[i] + " " + i)
-        tempList = list(map(str, temp.split()))
 
-        # 제목을 songList에 담음
-        # songList.append(get_namelist[i])
-        # songList.append(tempList[-1])
-        tempdict["title"] = get_namelist[i]
+        # None값이 리턴될경우 pass 시켜서 그 곡만 제외시키고 나머지 곡 정상 출력.
+        if temp is None:
+            print("none타입 검출")
+            tempName = ""
+            while not tempName in namelist_values:
+                temp_namelist = spotty.get_recommendation_name(genre, 1)
+                tempKeys = list(temp_namelist.keys())
+                tempKeys = tempKeys[0]
+                tempName = temp_namelist[tempKeys]
+                print(temp_namelist[tempKeys])
+                print(tempKeys)
+                print("한번 루프")
+            temp = yt.youtube_search_list(tempName + " " + tempKeys)
+            print(temp)
+            
+            tempList = list(map(str, temp.split()))
 
-        # id 분리 완료
-        tempList = list(map(str, tempList[-1].split('/')))
-        tempList = list(map(str, tempList[-1].split('=')))
+            # 제목을 songList에 담음
+            # songList.append(get_namelist[i])
+            # songList.append(tempList[-1])
+            tempdict["title"] = get_namelist[i]
 
-        # string값으로 duration을 반환하는 find_duration 함수
-        duration = yd.find_duration(tempList[-1])
-        tempdict["url"] = tempList[-1]
+            # id 분리 완료
+            tempList = list(map(str, tempList[-1].split('/')))
+            tempList = list(map(str, tempList[-1].split('=')))
 
-        # songList.append(duration)
-        tempdict["duration"] = duration
-        songList.append((tempdict))
+            # string값으로 duration을 반환하는 find_duration 함수
+            duration = yd.find_duration(tempList[-1])
+            tempdict["url"] = tempList[-1]
 
-        # 각각 분리된 id들을 임시로 리스트에 담아 저장
-        list_by_urls.append(tempList[-1])
-        counter += 1
+            # songList.append(duration)
+            tempdict["duration"] = duration
+            songList.append((tempdict))
+
+            # 각각 분리된 id들을 임시로 리스트에 담아 저장
+            list_by_urls.append(tempList[-1])
+            counter += 1
+
+        else:
+            tempList = list(map(str, temp.split()))
+
+            # 제목을 songList에 담음
+            # songList.append(get_namelist[i])
+            # songList.append(tempList[-1])
+            tempdict["title"] = get_namelist[i]
+
+            # id 분리 완료
+            tempList = list(map(str, tempList[-1].split('/')))
+            tempList = list(map(str, tempList[-1].split('=')))
+
+            # string값으로 duration을 반환하는 find_duration 함수
+            duration = yd.find_duration(tempList[-1])
+            tempdict["url"] = tempList[-1]
+
+            # songList.append(duration)
+            tempdict["duration"] = duration
+            songList.append((tempdict))
+
+            # 각각 분리된 id들을 임시로 리스트에 담아 저장
+            list_by_urls.append(tempList[-1])
+            counter += 1
 
     urls = ",".join(list_by_urls)
 
