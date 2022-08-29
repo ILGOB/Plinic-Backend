@@ -30,6 +30,8 @@ def youtube_search_list(word):
 
     # ?????여기서 갑자기 None값이 나옴 ㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋㅋ도대체 모르겠네~~도대체 모르겠어~~~~~~~~~
     # 걍 None타입나오면 서치 한번 더 돌리는걸로 하자!
+    # split을 돌릴때 none이라 오류나는것이므로, playlistMaker쪽에서 none처리
+
 
     # Print the title and ID of each matching resource.
     for search_result in search_response.get("items", []):
@@ -45,7 +47,7 @@ if __name__ == "__main__":
     try:
         # pprint.pprint(youtube_search_list("원더풀"))
         temp = youtube_search_list(
-            "TOTO +Toto")
+            "Can Sorry 루미다(Rumeda)")
         print(temp)
         tempList = list(map(str, temp.split()))
         print(tempList[-1])
