@@ -10,6 +10,7 @@ class TrackSerializer(serializers.ModelSerializer):
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
+    
     track_set = TrackSerializer(many=True)
     class Meta:
         model = Playlist
