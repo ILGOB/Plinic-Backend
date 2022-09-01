@@ -1,3 +1,4 @@
+import requests
 from googleapiclient.errors import HttpError
 from .utils import playlist_maker as pl
 from rest_framework import status, generics
@@ -12,7 +13,6 @@ from .models import Post
 from .models import Playlist
 from .serializers import PostSerializer
 from .serializers import PlaylistSerializer
-
 
 global total_urls
 total_urls = ""
@@ -31,23 +31,24 @@ class PostViewSet(ModelViewSet):
         serializer.save(profile=self.request.user.profile)
         return super().perform_create(serializer)
 
-#임시
-class RandomPlayListSet(generics.ListCreateAPIView):
 
+# 임시
+class RandomPlayListSet(generics.ListCreateAPIView):
     queryset = Playlist.objects.all()
     serializer_class = PlaylistSerializer
 
     def perform_create(self, serializer):
-        #serializer.save(user=self.request.user)
+        # serializer.save(user=self.request.user)
         title = "tempList"
         total_url = total_urls
         profile = 1
         genre = "k-pop"
-        
+
         serializer.save()
 
+
 class RandomPlayListView(APIView):
-   
+
     def get(self, request):
         if not 'genre' in request.GET or not 'num' in request.GET:
             return Response({"error": "A 'genre' and 'num' is required."}, status=status.HTTP_400_BAD_REQUEST)
@@ -67,10 +68,20 @@ class RandomPlayListView(APIView):
             else:
                 json_val = pl.random_playlist(genre, num)
                 ResponseData = Response(json_val)
-                
+
                 total_urls = json_val["Total_urls"]
                 print(total_urls)
                 return ResponseData
-        # watch_videos?video_ids=
+
 
 random_play_list_view = RandomPlayListView.as_view()
+
+
+# watch_videos?video_ids=
+
+
+class RandomThumbnailView(APIView):
+    def get(self, request):
+        url = "https://source.unsplash.com/random"
+        result_url = requests.get(url)
+        return Response({"url": result_url.url})

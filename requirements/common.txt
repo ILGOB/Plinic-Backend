@@ -4,7 +4,7 @@ djangorestframework
 Pillow==9.2.0
 pytz==2022.1
 sqlparse==0.4.2
-
+django-cors-headers
 
 aiohttp==3.8.1
 aiosignal==1.2.0

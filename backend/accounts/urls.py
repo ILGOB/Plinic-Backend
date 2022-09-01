@@ -6,5 +6,5 @@ router = SimpleRouter()
 router.register("profiles", views.ProfileViewSet)
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("", include(router.urls))
 ]
