@@ -5,7 +5,6 @@ from . import youtube_duration as yd
 import requests
 from rest_framework.response import Response
 
-
 def random_playlist(genre, num):
     get_namelist = spotty.get_recommendation_name(genre, num)  # 얕은카피
 
@@ -31,17 +30,33 @@ def random_playlist(genre, num):
 
         # None값이 리턴될경우 pass 시켜서 그 곡만 제외시키고 나머지 곡 정상 출력.
         if temp is None:
+
+            print(get_namelist[i])
             print("none타입 검출")
+
             tempName = ""
-            while not tempName in namelist_values:
+            temp_namelist = spotty.get_recommendation_name(genre, 1)
+            tempKeys = list(temp_namelist.keys())
+            tempKeys = tempKeys[0]
+            tempName = temp_namelist[tempKeys]
+
+            print(tempKeys)
+            print(temp_namelist[tempKeys])
+
+            while tempName in namelist_values:
                 temp_namelist = spotty.get_recommendation_name(genre, 1)
                 tempKeys = list(temp_namelist.keys())
                 tempKeys = tempKeys[0]
                 tempName = temp_namelist[tempKeys]
-                print(temp_namelist[tempKeys])
-                print(tempKeys)
+
                 print("한번 루프")
+                print(tempKeys)
+                print(temp_namelist[tempKeys])
+                
             temp = yt.youtube_search_list(tempName + " " + tempKeys)
+            if temp is None:
+                continue
+
             print(temp)
             
             tempList = list(map(str, temp.split()))
@@ -49,7 +64,7 @@ def random_playlist(genre, num):
             # 제목을 songList에 담음
             # songList.append(get_namelist[i])
             # songList.append(tempList[-1])
-            tempdict["title"] = get_namelist[i]
+            tempdict["title"] = tempName
 
             # id 분리 완료
             tempList = list(map(str, tempList[-1].split('/')))
