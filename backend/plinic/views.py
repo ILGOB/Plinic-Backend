@@ -1,3 +1,4 @@
+import requests
 from googleapiclient.errors import HttpError
 from .utils import playlist_maker as pl
 from rest_framework import status
@@ -48,3 +49,10 @@ class RandomPlayListView(APIView):
                 json_val = Response(pl.random_playlist(genre, num))
                 return json_val
         # watch_videos?video_ids=
+
+
+class RandomThumbnailView(APIView):
+    def get(self, request):
+        url = "https://source.unsplash.com/random"
+        result_url = requests.get(url)
+        return Response({"url": result_url.url})
