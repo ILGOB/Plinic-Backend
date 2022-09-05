@@ -74,12 +74,6 @@ class RandomPlayListView(APIView):
                 return ResponseData
 
 
-random_play_list_view = RandomPlayListView.as_view()
-
-
-# watch_videos?video_ids=
-
-
 class RandomThumbnailView(APIView):
     def get(self, request):
         url = "https://source.unsplash.com/random"
