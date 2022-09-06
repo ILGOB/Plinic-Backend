@@ -6,7 +6,7 @@ from googleapiclient.errors import HttpError
 '''
 
 
-DEVELOPER_KEY = "AIzaSyDfAxX1QZdRgBp5KUGpHXOjeYe8u9JX0hg"
+DEVELOPER_KEY = "AIzaSyCbSm4vQcnvyL1uWHY7dHa95M0TJeiHGPg"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 

@@ -10,13 +10,13 @@ from rest_framework.viewsets import ModelViewSet
 
 from .models import Post
 from .models import Playlist
+from .models import Genre
 from .serializers import PostSerializer
 from .serializers import PlaylistSerializer
 
 
 global total_urls
 total_urls = ""
-
 
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
@@ -31,20 +31,6 @@ class PostViewSet(ModelViewSet):
         serializer.save(profile=self.request.user.profile)
         return super().perform_create(serializer)
 
-#임시
-class RandomPlayListSet(generics.ListCreateAPIView):
-
-    queryset = Playlist.objects.all()
-    serializer_class = PlaylistSerializer
-
-    def perform_create(self, serializer):
-        #serializer.save(user=self.request.user)
-        title = "tempList"
-        total_url = total_urls
-        profile = 1
-        genre = "k-pop"
-        
-        serializer.save()
 
 class RandomPlayListView(APIView):
    
@@ -70,6 +56,24 @@ class RandomPlayListView(APIView):
                 
                 total_urls = json_val["Total_urls"]
                 print(total_urls)
+                
+                print(type(request.user.profile))
+                #개선이 매우 매우 매우 필요함!!!!!!
+                PlaylistGenre = list(Genre.objects.all())
+
+                for listgenre in PlaylistGenre:
+                    if "<Genre : "+genre+">" == str(listgenre):
+                        indexGenre = PlaylistGenre.index(listgenre)
+                        
+                RandomPlayList = Playlist()
+                RandomPlayList.title = "tempList"
+                RandomPlayList.total_url = json_val["Total_urls"]            
+                RandomPlayList.profile = request.user.profile
+                RandomPlayList.genre = PlaylistGenre[indexGenre]
+
+                
+                RandomPlayList.save()
+
                 return ResponseData
         # watch_videos?video_ids=
 

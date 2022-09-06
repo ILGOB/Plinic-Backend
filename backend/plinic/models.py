@@ -21,7 +21,7 @@ class Genre(TimeStampedModel):
 
 
 class Playlist(TimeStampedModel):
-    title = models.CharField(max_length=150, default="tempList")
+    title = models.CharField(max_length=150)
     total_url = models.URLField()
     thumbnail = models.ImageField(blank=True, upload_to="thumbnails/%Y/%m/%d")
     profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="playlist_profile_set")

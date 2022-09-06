@@ -11,7 +11,7 @@ def find_duration(video_id):
     # video_id = "3Y0eUYVjhQM"  # 10H9M11S
     # video_id = "1IlTeOMCNJU"  # 4M31S
 
-    api_key = "AIzaSyDfAxX1QZdRgBp5KUGpHXOjeYe8u9JX0hg"
+    api_key = "AIzaSyCbSm4vQcnvyL1uWHY7dHa95M0TJeiHGPg"
     searchUrl = "https://www.googleapis.com/youtube/v3/videos?id="+video_id+"&key="+api_key+"&part=contentDetails"
     response = urllib.request.urlopen(searchUrl).read()
     data = json.loads(response)
