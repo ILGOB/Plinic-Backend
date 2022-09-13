@@ -114,6 +114,7 @@ def random_playlist(genre, num):
 
     list_by_dict["tracks"] = songList
     list_by_dict["Total_urls"] = urls_by_response
+    list_by_dict["Genre"] = genre
     # print(list_by_dict)
     tempurl = list(map(str, urls_by_response.split('list=')))
     # print(tempurl)

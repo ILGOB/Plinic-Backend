@@ -1,3 +1,8 @@
+import profile
+import sys
+sys.path.append("..")
+
+from urllib import request
 from googleapiclient.errors import HttpError
 from .utils import playlist_maker as pl
 from rest_framework import status, generics
@@ -8,11 +13,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from .models import Post
-from .models import Playlist
-from .models import Genre
+import json
+
+from .models import Post, Track, Playlist, Genre
+
+from accounts.models import Profile
 from .serializers import PostSerializer
-from .serializers import PlaylistSerializer
+
+from datetime import timedelta
 
 
 global total_urls
@@ -31,6 +39,68 @@ class PostViewSet(ModelViewSet):
         serializer.save(profile=self.request.user.profile)
         return super().perform_create(serializer)
 
+class RandomPlaylistCreate(APIView):
+    
+    def post(self, request):
+        data = json.loads(request.body)
+        Response_json = Response(data)
+        
+        print(data["tracks"][0]["title"])
+
+
+
+        #######임시 플레이리스트 생성 시작
+        #랜덤플레이리스트를 만들어낸 유저의 id정보
+        PlaylistUser = list(Profile.objects.filter(id = data["profile_id"]))
+        # print(PlaylistUser[0])
+        # print(type(PlaylistUser[0]))
+        # print(type(request.user.profile))
+        #테스트용으로 만든 변수
+        titleName = "title123414"
+
+        #개선이 매우 매우 매우 필요함!!!!!!
+        #랜덤 플레이리스트의 장르가 설정한 장르와 맞을때만 작동하도록 else문을 작성해야함
+        #filter로 안한 이유는 작성시 filter를 제대로 몰라서, 수정가능함 
+        PlaylistGenre = list(Genre.objects.all())
+
+        for listgenre in PlaylistGenre:
+            if "<Genre : "+data["Genre"]+">" == str(listgenre):
+                indexGenre = PlaylistGenre.index(listgenre)
+                
+        RandomPlayList = Playlist()
+        RandomPlayList.title = titleName
+        RandomPlayList.total_url = data["Total_urls"]            
+        RandomPlayList.profile = PlaylistUser[0]
+        RandomPlayList.genre = PlaylistGenre[indexGenre]
+        
+        RandomPlayList.save()
+        ######임시 플레이리스트 생성 완료
+
+        ######Track생성 시작
+        RandomPlayList = list(Playlist.objects.filter(title = titleName).filter(profile = PlaylistUser[0]))
+        print(RandomPlayList[0])
+        print(type(RandomPlayList[0]))
+
+        for tracks in data["tracks"]:
+            RandomPlayList_Track = Track()
+            RandomPlayList_Track.playlist = RandomPlayList[0]
+            RandomPlayList_Track.title = tracks["title"]
+            RandomPlayList_Track.url = tracks["url"]
+            duration_list = list(map(int, tracks["duration"].split(":")))
+            total_seconds = duration_list[0]*3600+duration_list[1]*60+duration_list[2]
+            RandomPlayList_Track.duration = timedelta(seconds = total_seconds)
+
+            RandomPlayList_Track.save()
+
+        Playlist.objects.filter(title = titleName).filter(profile = PlaylistUser[0]).update(title = "포스트로 받아온 타이틀이름2!")
+
+
+        # RandomPlayList = Playlist.objects.filter(title = "tempList").filter(profile = PlaylistUser[0])
+        
+
+
+        return Response_json
+random_play_list_create = RandomPlaylistCreate.as_view()
 
 class RandomPlayListView(APIView):
    
@@ -51,28 +121,12 @@ class RandomPlayListView(APIView):
             if int(num) >= 21:
                 return Response({"error": "More than 20 songs are not possible."}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                json_val = pl.random_playlist(genre, num)
-                ResponseData = Response(json_val)
-                
-                total_urls = json_val["Total_urls"]
-                print(total_urls)
-                
-                print(type(request.user.profile))
-                #개선이 매우 매우 매우 필요함!!!!!!
-                PlaylistGenre = list(Genre.objects.all())
+                data = pl.random_playlist(genre, num)
+                data["profile_id"] = request.user.profile.id
 
-                for listgenre in PlaylistGenre:
-                    if "<Genre : "+genre+">" == str(listgenre):
-                        indexGenre = PlaylistGenre.index(listgenre)
-                        
-                RandomPlayList = Playlist()
-                RandomPlayList.title = "tempList"
-                RandomPlayList.total_url = json_val["Total_urls"]            
-                RandomPlayList.profile = request.user.profile
-                RandomPlayList.genre = PlaylistGenre[indexGenre]
-
+                ResponseData = Response(data)
+                print(request.user.profile.id)
                 
-                RandomPlayList.save()
 
                 return ResponseData
         # watch_videos?video_ids=
