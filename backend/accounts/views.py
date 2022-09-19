@@ -1,8 +1,3 @@
-from rest_framework.viewsets import ModelViewSet
-from .models import Profile
-from .serializers import ProfileSerializer
+from django.shortcuts import render
 
-
-class ProfileViewSet(ModelViewSet):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
+# Create your views here.

@@ -14,8 +14,6 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-print(BASE_DIR)
-ROOT_DIR = os.path.dirname(BASE_DIR)
 
 
 # Quick-start development settings - unsuitable for production
@@ -44,7 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     # local apps
     'plinic',
-    'accounts.apps.AccountsConfig',
+    'accounts'
 ]
 
 MIDDLEWARE = [
@@ -107,7 +105,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = "auth.User"
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/

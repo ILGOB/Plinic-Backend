@@ -174,5 +174,3 @@ play_list_detail = PlaylistDetail.as_view()
 
 #                 return ResponseData
 #         # watch_videos?video_ids=
-
-# random_play_list_view = RandomPlayListView.as_view()

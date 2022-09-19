@@ -5,8 +5,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('plinic-api/', include("plinic.urls")),
-    path('accounts-api/', include("accounts.urls")),
+    path('', include("plinic.urls")),
 ]
 
 if settings.DEBUG:
