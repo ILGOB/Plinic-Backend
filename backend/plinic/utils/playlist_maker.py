@@ -5,6 +5,7 @@ from . import youtube_duration as yd
 import requests
 from rest_framework.response import Response
 
+
 def random_playlist(genre, num):
     get_namelist = spotty.get_recommendation_name(genre, num)  # 얕은카피
 
@@ -113,7 +114,7 @@ def random_playlist(genre, num):
     urls_by_response = response.url
 
     list_by_dict["tracks"] = songList
-    list_by_dict["Total_urls"] = urls_by_response
+    list_by_dict["total_url"] = urls_by_response
     # print(list_by_dict)
     tempurl = list(map(str, urls_by_response.split('list=')))
     # print(tempurl)
