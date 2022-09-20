@@ -8,6 +8,9 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('plinic-api/', include("plinic.urls")),
     path('accounts-api/', include("accounts.urls")),
+    path('accounts-api/', include('dj_rest_auth.urls')),
+    path('accounts-api/', include('allauth.urls')),
+    path('accounts-api/', include('accounts.urls')),
 ]
 
 if settings.DEBUG:
