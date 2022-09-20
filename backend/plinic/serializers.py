@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Post, Tag, Playlist, Track
+
+from accounts.models import Profile
+from .models import Post, Tag, Playlist, Track, Genre
 from accounts.serializers import ProfileSerializer
 
 
@@ -10,10 +12,19 @@ class TrackSerializer(serializers.ModelSerializer):
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
-    track = TrackSerializer(many=True, source="track_set")
+    track_name = serializers.SlugRelatedField(many=True,
+                                              read_only=True,
+                                              slug_field='title',
+                                              source='track_set')
+    track_set = serializers.PrimaryKeyRelatedField(queryset=Track.objects.all(),
+                                                   many=True,
+                                                   write_only=True)
     imgUrl = serializers.URLField(source="thumbnail")
     totalUrl = serializers.URLField(source="total_url")
-    genre = serializers.SlugRelatedField(read_only=True, slug_field='name')
+    genre_name = serializers.SlugRelatedField(read_only=True, slug_field='name', source='genre')
+    genre_id = serializers.PrimaryKeyRelatedField(queryset=Genre.objects.all(), write_only=True)
+    scrapper_name_set = serializers.SlugRelatedField(read_only=True, slug_field='nickname', source='scrapper_set', many=True)
+    scrapper_id_set = serializers.PrimaryKeyRelatedField(many=True, write_only=True, queryset=Profile.objects.all())
     isScrapped = serializers.SerializerMethodField()
 
     class Meta:
@@ -21,15 +32,20 @@ class PlaylistSerializer(serializers.ModelSerializer):
         fields = ["title",
                   "imgUrl",
                   "totalUrl",
-                  "track",
-                  "genre",
-                  "isScrapped",]
+                  "track_name",
+                  "track_set",
+                  "genre_name",
+                  "genre_id",
+                  "isScrapped",
+                  "scrapper_name_set",
+                  "scrapper_id_set",]
 
     def get_isScrapped(self, obj):
         if "request" in self.context:
             user = self.context['request'].user
             return obj.scrapper_set.filter(pk=user.pk).exists()
         return False
+
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
