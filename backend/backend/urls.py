@@ -3,14 +3,15 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('plinic-api/', include("plinic.urls")),
-    path('accounts-api/', include("accounts.urls")),
-    path('accounts-api/', include('dj_rest_auth.urls')),
-    path('accounts-api/', include('allauth.urls')),
-    path('accounts-api/', include('accounts.urls')),
+    path('api/v1/plinic/', include("plinic.urls")),
+    path('api/v1/accounts/', include("accounts.urls")),
+
+    path('api/v1/accounts/', include('dj_rest_auth.urls')),
+    path('api/v1/accounts/', include('allauth.urls')),
 ]
 
 if settings.DEBUG:

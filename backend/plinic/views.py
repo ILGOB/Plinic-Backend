@@ -38,7 +38,7 @@ class PostViewSet(ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(
-            {"message": f"게시물이 성공적으로 삭제되었습니다."},
+            {"success": f"게시물이 성공적으로 삭제되었습니다."},
             status=status.HTTP_204_NO_CONTENT
         )
 
@@ -63,7 +63,7 @@ class RandomPlayListView(APIView):
 
     def get(self, request):
         if ('genre' not in request.GET) or ('num' not in request.GET):
-            # 'genre', 'num' 이 querysting으로 안 들어오면 에러 메시지 출력
+            # 'genre', 'num' 이 querystring 으로 안 들어오면 에러 메시지 출력
             return Response({"error": "잘못된 요청입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
         else:

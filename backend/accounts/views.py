@@ -1,4 +1,3 @@
-from json.decoder import JSONDecodeError
 import requests
 from allauth.socialaccount.models import SocialAccount
 from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
@@ -7,8 +6,8 @@ from dj_rest_auth.registration.views import SocialLoginView
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect
+from django.urls import reverse, reverse_lazy
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Profile
@@ -20,28 +19,26 @@ class ProfileViewSet(ModelViewSet):
     serializer_class = ProfileSerializer
 
 
-kakao_callback_uri = 'http://127.0.0.1:8080/accounts-api/kakao-authentication/callback/'
+KAKAO_CALLBACK_URI = "http://127.0.0.1:8000/api/v1/accounts/kakao-authentication/callback/"
+REST_API_KEY = "e3a3cafb8f3c120fefe2133dc74dce85"
 
 
-def kakao_login(request):
+def kakao_login_view(request):
     print("______KAKAO LOGIN______")
-    rest_api_key = 'e3a3cafb8f3c120fefe2133dc74dce85'
     return redirect(
-        f"https://kauth.kakao.com/oauth/authorize?client_id={rest_api_key}&redirect_uri={kakao_callback_uri}&response_type=code"
+        f"https://kauth.kakao.com/oauth/authorize?client_id={REST_API_KEY}&redirect_uri={KAKAO_CALLBACK_URI}&response_type=code"
     )
 
 
-def kakao_callback(request):
+def kakao_callback_view(request):
     print("______KAKAO CALLBACK______")
-    rest_api_key = 'e3a3cafb8f3c120fefe2133dc74dce85'
-    redirect_uri = 'http://127.0.0.1:8080/accounts-api/kakao-authentication/callback/'
     code = request.GET.get("code")
     User = get_user_model()
     """
     Access Token Request
     """
     token_req = requests.get(
-        f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={rest_api_key}&redirect_uri={redirect_uri}&code={code}")
+        f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={REST_API_KEY}&redirect_uri={KAKAO_CALLBACK_URI}&code={code}")
     token_req_json = token_req.json()
     error = token_req_json.get("error")
     if error:
@@ -82,7 +79,7 @@ def kakao_callback(request):
         # 기존에 Google로 가입된 유저
         data = {'access_token': access_token, 'code': code}
         accept = requests.post(
-            f"http://127.0.0.1:8080/accounts-api/kakao/login/finish/", data=data)
+            f"http://127.0.0.1:8000/api/v1/accounts/kakao-authentication/login/finish/", data=data)
         accept_status = accept.status_code
         if accept_status != 200:
             return JsonResponse({'err_msg': 'failed to signin'}, status=accept_status)
@@ -93,7 +90,7 @@ def kakao_callback(request):
         # 기존에 가입된 유저가 없으면 새로 가입
         data = {'access_token': access_token, 'code': code}
         accept = requests.post(
-            f"http://127.0.0.1:8080/accounts-api/kakao-authentication/login/finish/", data=data)
+            f"http://127.0.0.1:8000/api/v1/accounts/kakao-authentication/login/finish/", data=data)
         accept_status = accept.status_code
         if accept_status != 200:
             print(accept_status)
@@ -104,7 +101,7 @@ def kakao_callback(request):
         return JsonResponse(accept_json, safe=False)
 
 
-class KakaoLogin(SocialLoginView):
+class KakaoLoginView(SocialLoginView):
     adapter_class = KakaoOAuth2Adapter
     client_class = OAuth2Client
-    callback_url = 'http://127.0.0.1:8080/plinic-api/accounts/kakao-authentication-callback/'
+    callback_url = KAKAO_CALLBACK_URI
