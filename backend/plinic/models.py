@@ -21,7 +21,7 @@ class Genre(TimeStampedModel):
 
 
 class Playlist(TimeStampedModel):
-    title = models.CharField(max_length=150, default="tempList")
+    title = models.CharField(max_length=30, default="tempList")
     total_url = models.URLField()
     thumbnail = models.ImageField(blank=True, upload_to="thumbnails/%Y/%m/%d")
     profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE, related_name="playlist_profile_set")
@@ -35,7 +35,7 @@ class Playlist(TimeStampedModel):
 
 class Track(TimeStampedModel):
     playlist = models.ForeignKey("Playlist", on_delete=models.CASCADE)
-    title = models.CharField(max_length=150)
+    title = models.CharField(max_length=30)
     url = models.URLField()
     duration = models.DurationField()
 
@@ -64,7 +64,7 @@ class Tag(TimeStampedModel):
 
 class Notice(TimeStampedModel):
     author = models.ForeignKey("accounts.Profile", on_delete=models.DO_NOTHING)  # 관리자가 탈퇴해도 게시물은 지워지지 않도록 함
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=30)
     content = models.TextField()
 
     def __str__(self):
