@@ -14,7 +14,7 @@ class TimeStampedModel(models.Model):
 
 
 class Genre(TimeStampedModel):
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
         return f'<Genre : {self.name}>'
@@ -56,7 +56,7 @@ class Post(TimeStampedModel):
 
 
 class Tag(TimeStampedModel):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=10)
 
     def __str__(self):
         return f'<Tag : {self.name}>'

@@ -5,6 +5,7 @@ from . import views
 router = SimpleRouter()
 router.register("posts", views.PostViewSet)
 router.register("playlists", views.PlaylistViewSet)
+router.register("notices", views.NoticeViewSet)
 
 urlpatterns = [
     path('random-thumbnail/', views.RandomThumbnailView.as_view()),

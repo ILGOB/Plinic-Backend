@@ -14,16 +14,51 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from .models import Post, Track
-from .models import Playlist
+from .models import Post, Track, Playlist, Notice
 from .serializers import PostListSerializer, PostDetailSerializer
-from .serializers import PlaylistSerializer
+from .serializers import PlaylistSerializer, NoticeDetailSerializer, NoticeListSerializer
 
+
+class NoticeViewSet(ModelViewSet):
+    queryset = Notice.objects.all()
+    serializer_class = NoticeDetailSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+    def perform_create(self, serializer):
+        serializer.save(profile=self.request.user.profile)
+        return super().perform_create(serializer)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {"success": f"게시물이 성공적으로 삭제되었습니다."},
+            status=status.HTTP_204_NO_CONTENT
+        )
+    action_serializers = {
+        # Detail serializers
+        'retrieve': NoticeDetailSerializer,
+        'update': NoticeListSerializer,
+        'delete': NoticeListSerializer,
+        # List serializers
+        'list': NoticeListSerializer,
+        'create': NoticeListSerializer,
+    }
+
+    def get_serializer_class(self):
+        if hasattr(self, 'action_serializers'):
+            return self.action_serializers.get(self.action, self.serializer_class)
+        return super(PostViewSet, self).get_serializer_class()
 
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all().order_by("-pk")
     serializer_class = PostDetailSerializer
-    permission_classes = (PostPermission,)
+
+    # permission_classes = (PostPermission,)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
