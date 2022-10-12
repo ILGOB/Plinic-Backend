@@ -1,3 +1,7 @@
 -r common.txt
 
 django-debug-toolbar
+
+
+pysqlite3
+pysqlite3-binary
