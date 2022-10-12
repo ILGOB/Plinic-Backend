@@ -68,10 +68,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-try:
-    ROOT_URLCONF = 'backend.urls'
-except ModuleNotFoundError as e:
-    ROOT_URLCONF = 'urls'
+
+ROOT_URLCONF = 'backend.urls'
+
 
 TEMPLATES = [
     {
