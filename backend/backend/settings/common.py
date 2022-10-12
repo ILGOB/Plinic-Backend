@@ -67,9 +67,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-sys.path.append(os.path.join(BASE_DIR, ''))
-url = str(Path(__file__).resolve().parent.parent.name) + '.urls'
-ROOT_URLCONF = 'backend.urls'
+
+try:
+    ROOT_URLCONF = 'backend.urls'
+except ModuleNotFoundError as e:
+    ROOT_URLCONF = 'urls'
 
 TEMPLATES = [
     {
