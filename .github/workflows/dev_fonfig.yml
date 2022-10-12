@@ -1,10 +1,10 @@
 name: CI-CD pipeline to AWS for development enviroment
 env:
-  EB_S3_BUCKET_NAME: [ "plinic-bucket" ]
-  EB_APPLICATION_NAME: [ "plinic-api" ]
-  EB_ENVIRONMENT_NAME: [ "Plinicapi-env" ]
+  EB_S3_BUCKET_NAME: "plinic-bucket"
+  EB_APPLICATION_NAME: "plinic-api"
+  EB_ENVIRONMENT_NAME: "Plinicapi-env"
   DEPLOY_PACKAGE_NAME: "django-app-${{ github.sha }}.zip"
-  AWS_REGION_NAME: [ "ap-northeast-1" ]
+  AWS_REGION_NAME: "ap-northeast-1"
 
 on:
   push:
