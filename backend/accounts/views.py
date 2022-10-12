@@ -6,20 +6,22 @@ from dj_rest_auth.registration.views import SocialLoginView
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import redirect
-from django.urls import reverse, reverse_lazy
 from rest_framework import status
-from rest_framework.viewsets import ModelViewSet
+from rest_framework import generics
 
 from .models import Profile
 from .serializers import ProfileSerializer
 
 
-class ProfileViewSet(ModelViewSet):
-    queryset = Profile.objects.all()
+class ProfilePageView(generics.RetrieveUpdateDestroyAPIView):
+    def get_queryset(self):
+        return Profile.objects.filter(nickname=self.kwargs["nickname"])
     serializer_class = ProfileSerializer
+    lookup_field = 'nickname'
 
 
 KAKAO_CALLBACK_URI = "http://127.0.0.1:8000/api/v1/accounts/kakao-authentication/callback/"
+# KAKAO_CALLBACK_URI = "http://172.19.109.57:8000/api/v1/accounts/kakao-authentication/callback/"
 REST_API_KEY = "e3a3cafb8f3c120fefe2133dc74dce85"
 
 
@@ -80,6 +82,8 @@ def kakao_callback_view(request):
         data = {'access_token': access_token, 'code': code}
         accept = requests.post(
             f"http://127.0.0.1:8000/api/v1/accounts/kakao-authentication/login/finish/", data=data)
+        # accept = requests.post(
+        #     f"http://172.19.109.57:8000//api/v1/accounts/kakao-authentication/login/finish/", data=data)
         accept_status = accept.status_code
         if accept_status != 200:
             return JsonResponse({'err_msg': 'failed to signin'}, status=accept_status)
@@ -91,6 +95,8 @@ def kakao_callback_view(request):
         data = {'access_token': access_token, 'code': code}
         accept = requests.post(
             f"http://127.0.0.1:8000/api/v1/accounts/kakao-authentication/login/finish/", data=data)
+        # accept = requests.post(
+        #     f"http://172.19.109.57:8000/api/v1/accounts/kakao-authentication/login/finish/", data=data)
         accept_status = accept.status_code
         if accept_status != 200:
             print(accept_status)

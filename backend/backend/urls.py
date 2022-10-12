@@ -9,8 +9,9 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/v1/plinic/', include("plinic.urls")),
     path('api/v1/accounts/', include("accounts.urls")),
-
+    # dj_rest_auth : 로그인 관련
     path('api/v1/accounts/', include('dj_rest_auth.urls')),
+    # allauth : 소셜 로그인 관련
     path('api/v1/accounts/', include('allauth.urls')),
 ]
 

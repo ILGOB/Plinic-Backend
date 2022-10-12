@@ -5,6 +5,14 @@ from .models import Post, Tag, Playlist, Track, Genre, Notice
 from accounts.serializers import ProfileSerializer
 
 
+class TimeStampedSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format="%Y.%m.%d", read_only=True)
+    updated_at = serializers.DateTimeField(format="%Y.%m.%d", read_only=True)
+
+    class Meta:
+        abstract = True
+
+
 class TrackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Track
@@ -19,29 +27,29 @@ class PlaylistSerializer(serializers.ModelSerializer):
     track_set = serializers.PrimaryKeyRelatedField(queryset=Track.objects.all(),
                                                    many=True,
                                                    write_only=True)
-    imgUrl = serializers.URLField(source="thumbnail")
-    totalUrl = serializers.URLField(source="total_url")
+    thumbnail_img_url = serializers.URLField(source="thumbnail")
+    total_url = serializers.URLField()
     genre_name = serializers.SlugRelatedField(read_only=True, slug_field='name', source='genre')
     genre_id = serializers.PrimaryKeyRelatedField(queryset=Genre.objects.all(), write_only=True)
     scrapper_name_set = serializers.SlugRelatedField(read_only=True, slug_field='nickname', source='scrapper_set',
                                                      many=True)
     scrapper_id_set = serializers.PrimaryKeyRelatedField(many=True, write_only=True, queryset=Profile.objects.all())
-    isScrapped = serializers.SerializerMethodField()
+    is_scrapped = serializers.SerializerMethodField()
 
     class Meta:
         model = Playlist
         fields = ["title",
-                  "imgUrl",
-                  "totalUrl",
+                  "thumbnail_img_url",
+                  "total_url",
                   "track_name",
                   "track_set",
                   "genre_name",
                   "genre_id",
-                  "isScrapped",
+                  "is_scrapped",
                   "scrapper_name_set",
                   "scrapper_id_set", ]
 
-    def get_isScrapped(self, obj):
+    def get_is_scrapped(self, obj):
         if "request" in self.context:
             user = self.context['request'].user
             return obj.scrapper_set.filter(pk=user.pk).exists()
@@ -56,57 +64,44 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ["name", ]
 
 
-class PostDetailSerializer(serializers.ModelSerializer):
-    """
-    제목
-    작성자
-    좋아요 여부
-    좋아요 수
-    생성일자, 수정일자
-    태그
-    로그인한 유저의 스크랩 여부
-    플레이리스트
-        장르
-    """
-    isUpdated = serializers.SerializerMethodField()
-    created = serializers.DateTimeField(format="%Y.%m.%d", read_only=True, source="created_at")
-    updated = serializers.DateTimeField(format="%Y.%m.%d", read_only=True, source="updated_at")
-    profile = ProfileSerializer(read_only=True)
-    tag = serializers.SlugRelatedField(many=True, read_only=True, slug_field='name', source="tag_set")
-    playlistInfo = PlaylistSerializer(read_only=True, source='playlist')
-    likerCount = serializers.SerializerMethodField()
-    isLike = serializers.SerializerMethodField()
+class PostDetailSerializer(TimeStampedSerializer):
+    is_updated = serializers.SerializerMethodField()
+    author = serializers.SlugRelatedField(slug_field='nickname',
+                                          read_only=True, source='profile')
+    tag_set = serializers.SlugRelatedField(many=True, read_only=True, slug_field='name')
+    playlist = PlaylistSerializer(read_only=True)
+    liker_count = serializers.SerializerMethodField()
+    is_like = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ["id",
-                  "isUpdated",
-                  "created",
-                  "updated",
-                  "profile",
-                  "tag",
-                  "playlistInfo",
-                  "likerCount",
+        fields = ["is_updated",
+                  "created_at",
+                  "updated_at",
+                  "tag_set",
+                  "playlist",
+                  "liker_count",
                   "title",
                   "content",
-                  "isLike"]
+                  "is_like",
+                  "author",]
 
-    def get_likerCount(self, obj):
+    def get_liker_count(self, obj):
         return obj.liker_set.count()
 
-    def get_isLike(self, obj):
+    def get_is_like(self, obj):
         if "request" in self.context:
             user = self.context['request'].user
             return obj.liker_set.filter(pk=user.pk).exists()
         return False
 
-    def get_isUpdated(self, obj):
+    def get_is_updated(self, obj):
         created_at = obj.created_at.strftime(format="%Y-%m-%d %H:%M")
         updated_at = obj.updated_at.strftime(format="%Y-%m-%d %H:%M")
         return not updated_at == created_at
 
 
-class NoticeDetailSerializer(serializers.ModelSerializer):
+class NoticeDetailSerializer(TimeStampedSerializer):
     author = serializers.SlugRelatedField(slug_field='nickname',
                                           read_only=True)
     created_at = serializers.DateTimeField(format="%Y.%m.%d", read_only=True)
@@ -121,37 +116,40 @@ class NoticeDetailSerializer(serializers.ModelSerializer):
                   "author"]
 
 
-class NoticeListSerializer(NoticeDetailSerializer):
+class NoticeListSerializer(NoticeDetailSerializer, TimeStampedSerializer):
+    content = serializers.CharField(write_only=True)
+
     class Meta:
         model = Notice
-        fields = ["title", "author"]
+        fields = ["title", "author", "content",
+                  "created_at", "updated_at"]
 
 
 class PostListSerializer(serializers.ModelSerializer):
-    likerCount = serializers.SerializerMethodField()
-    isLike = serializers.SerializerMethodField()
-    profile = ProfileSerializer(read_only=True)
-    playListId = serializers.PrimaryKeyRelatedField(queryset=Playlist.objects.all(),
-                                                    source='playlist', write_only=True)
+    liker_count = serializers.SerializerMethodField()
+    is_like = serializers.SerializerMethodField()
+    author = serializers.SlugRelatedField(read_only=True, slug_field='nickname',
+                                          source='profile')
+    playlist_id = serializers.PrimaryKeyRelatedField(queryset=Playlist.objects.all(),
+                                                     source='playlist', write_only=True)
     tag_set = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(),
-                                                 many=True, )
+                                                 many=True, write_only=True)
 
     class Meta:
         model = Post
-        fields = ["id",
-                  "profile",
-                  "likerCount",
+        fields = ["author",
+                  "liker_count",
                   "title",
-                  "isLike",
+                  "is_like",
                   # "isScrapped",
                   "content",
-                  "playListId",
+                  "playlist_id",
                   "tag_set", ]
 
-    def get_likerCount(self, obj):
+    def get_liker_count(self, obj):
         return obj.liker_set.count()
 
-    def get_isLike(self, obj):
+    def get_is_like(self, obj):
         if "request" in self.context:
             user = self.context['request'].user
             return obj.liker_set.filter(pk=user.pk).exists()

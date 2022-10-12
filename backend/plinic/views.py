@@ -39,6 +39,7 @@ class NoticeViewSet(ModelViewSet):
             {"success": f"게시물이 성공적으로 삭제되었습니다."},
             status=status.HTTP_204_NO_CONTENT
         )
+
     action_serializers = {
         # Detail serializers
         'retrieve': NoticeDetailSerializer,
@@ -53,6 +54,7 @@ class NoticeViewSet(ModelViewSet):
         if hasattr(self, 'action_serializers'):
             return self.action_serializers.get(self.action, self.serializer_class)
         return super(PostViewSet, self).get_serializer_class()
+
 
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all().order_by("-pk")
@@ -106,7 +108,7 @@ class RandomPlayListView(APIView):
             genre = request.GET['genre']
             num = request.GET['num']
             if int(num) >= 21:
-                return Response({"error": "20곡이 넘게 요청할 수 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "잘못된 요청입니다."}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 json_val = pl.random_playlist(genre, num)
                 return Response(json_val)
@@ -126,4 +128,4 @@ class RandomThumbnailView(APIView):
     def get(self, request):
         url = "https://source.unsplash.com/random"
         result_url = requests.get(url)
-        return Response({"url": result_url.url})
+        return Response({"img_url": result_url.url})
