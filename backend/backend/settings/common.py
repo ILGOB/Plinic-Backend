@@ -67,7 +67,7 @@ MIDDLEWARE = [
 ]
 
 url = str(Path(__file__).resolve().parent.parent.name) + '.urls'
-ROOT_URLCONF = url
+ROOT_URLCONF = 'urls'
 
 TEMPLATES = [
     {
