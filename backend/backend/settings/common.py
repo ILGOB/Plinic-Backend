@@ -52,8 +52,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.kakao',
     # local apps
-    'plinic',
     'accounts.apps.AccountsConfig',
+    'plinic',
 ]
 
 MIDDLEWARE = [
