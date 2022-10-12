@@ -9,12 +9,14 @@ https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/
 
 import os
 import sys
+from pathlib import Path
+
 from django.core.wsgi import get_wsgi_application
 
 
-sys.path.append('../../../Plinic-Backend')
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 sys.path.append('venv/lib/python3.10/site-packages')
-sys.path.append('../../backend')
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.backend.settings.dev')
 
 application = get_wsgi_application()
