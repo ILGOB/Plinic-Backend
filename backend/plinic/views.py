@@ -30,7 +30,7 @@ class NoticeViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(profile=self.request.user.profile)
-        return super().perform_create(serializer)
+        # return super().perform_create(serializer)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
