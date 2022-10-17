@@ -76,7 +76,8 @@ class PostDetailSerializer(TimeStampedSerializer):
 
     class Meta:
         model = Post
-        fields = ["is_updated",
+        fields = ["id",
+                  "is_updated",
                   "created_at",
                   "updated_at",
                   "tag_set",
