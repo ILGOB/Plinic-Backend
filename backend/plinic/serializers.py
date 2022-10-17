@@ -36,7 +36,8 @@ class PlaylistSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Playlist
-        fields = ["title",
+        fields = ["id",
+                  "title",
                   "thumbnail_img_url",
                   "total_url",
                   "track_name",
