@@ -84,7 +84,7 @@ class PostDetailSerializer(TimeStampedSerializer):
                   "title",
                   "content",
                   "is_like",
-                  "author",]
+                  "author", ]
 
     def get_liker_count(self, obj):
         return obj.liker_set.count()
@@ -109,7 +109,8 @@ class NoticeDetailSerializer(TimeStampedSerializer):
 
     class Meta:
         model = Notice
-        fields = ["created_at",
+        fields = ["id",
+                  "created_at",
                   "updated_at",
                   "title",
                   "content",
@@ -121,8 +122,19 @@ class NoticeListSerializer(NoticeDetailSerializer, TimeStampedSerializer):
 
     class Meta:
         model = Notice
-        fields = ["title", "author", "content",
-                  "created_at", "updated_at"]
+        fields = ["id",
+                  "title",
+                  "author",
+                  "content",
+                  "created_at",
+                  "updated_at"]
+
+
+class NoticeRecentSerializer(NoticeListSerializer):
+    class Meta:
+        model = Notice
+        fields = ["id",
+                  "title"]
 
 
 class PostListSerializer(serializers.ModelSerializer):

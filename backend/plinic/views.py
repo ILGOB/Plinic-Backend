@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from .models import Post, Track, Playlist, Notice
 from .serializers import PostListSerializer, PostDetailSerializer
-from .serializers import PlaylistSerializer, NoticeDetailSerializer, NoticeListSerializer
+from .serializers import PlaylistSerializer, NoticeDetailSerializer, NoticeListSerializer, NoticeRecentSerializer
 
 
 class NoticeViewSet(ModelViewSet):
@@ -27,6 +27,7 @@ class NoticeViewSet(ModelViewSet):
         qs = super().get_queryset()
         search = self.request.query_params.get('recent', '')
         if search == "true":
+            self.pagination_class = None
             latest_pk = Notice.objects.last().pk
             qs = Notice.objects.filter(pk=latest_pk)
         return qs
@@ -56,12 +57,16 @@ class NoticeViewSet(ModelViewSet):
         # List serializers
         'list': NoticeListSerializer,
         'create': NoticeListSerializer,
+        # Recent serailizer
+        'recent' : NoticeRecentSerializer
     }
 
     def get_serializer_class(self):
         if hasattr(self, 'action_serializers'):
+            if self.request.query_params.get('recent', ''):
+                return self.action_serializers.get('recent', self.serializer_class)
             return self.action_serializers.get(self.action, self.serializer_class)
-        return super(PostViewSet, self).get_serializer_class()
+        return super(NoticeViewSet, self).get_serializer_class()
 
 
 class PostViewSet(ModelViewSet):
