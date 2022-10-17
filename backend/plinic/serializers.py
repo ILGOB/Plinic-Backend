@@ -31,9 +31,7 @@ class PlaylistSerializer(serializers.ModelSerializer):
     total_url = serializers.URLField()
     genre_name = serializers.SlugRelatedField(read_only=True, slug_field='name', source='genre')
     genre_id = serializers.PrimaryKeyRelatedField(queryset=Genre.objects.all(), write_only=True)
-    scrapper_name_set = serializers.SlugRelatedField(read_only=True, slug_field='nickname', source='scrapper_set',
-                                                     many=True)
-    scrapper_id_set = serializers.PrimaryKeyRelatedField(many=True, write_only=True, queryset=Profile.objects.all())
+    scrapper_count = serializers.SerializerMethodField()
     is_scrapped = serializers.SerializerMethodField()
 
     class Meta:
@@ -46,14 +44,16 @@ class PlaylistSerializer(serializers.ModelSerializer):
                   "genre_name",
                   "genre_id",
                   "is_scrapped",
-                  "scrapper_name_set",
-                  "scrapper_id_set", ]
+                  "scrapper_count",]
 
     def get_is_scrapped(self, obj):
         if "request" in self.context:
             user = self.context['request'].user
             return obj.scrapper_set.filter(pk=user.pk).exists()
         return False
+
+    def get_scrapper_count(self, obj):
+        return obj.scrapper_set.count()
 
 
 class TagSerializer(serializers.ModelSerializer):
