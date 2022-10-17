@@ -68,9 +68,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'backend.urls'
-
 
 TEMPLATES = [
     {
@@ -156,6 +154,7 @@ REST_FRAMEWORK = {
     # ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ),
 }

@@ -2,8 +2,11 @@ import json
 from datetime import timedelta
 from urllib import request
 
+import random
+
 import requests
 from googleapiclient.errors import HttpError
+from requests.auth import HTTPBasicAuth
 
 from accounts.models import Profile
 from .permissions import PostPermission
@@ -137,6 +140,29 @@ class PlaylistViewSet(ModelViewSet):
     serializer_class = PlaylistSerializer
 
 
+class RandomBackgroundView(APIView):
+    def get(self, request):
+        id_list = ["3116500",
+                   "3116506",
+                   "5197762",
+                   "2697038",
+                   "3211457",
+                   "857136",
+                   "2962724"]
+        url = "https://api.pexels.com/videos/videos/"
+        api_key = '563492ad6f91700001000001f4e83ff4703f4a20a5a558a554e11d9f'
+
+        headers = {
+            'Content-type': 'application/json',
+            'Authorization': api_key
+        }
+
+        id = random.choice(id_list)
+        response = requests.get(url=url + id, headers=headers).json()['video_files']
+        print(response)
+        return Response({"background_url": response[0]['link']})
+
+
 class RandomThumbnailView(APIView):
     def get(self, request):
         url = "https://source.unsplash.com/random"
@@ -144,14 +170,20 @@ class RandomThumbnailView(APIView):
         return Response({"img_url": result_url.url})
 
 
-class LikeAddView(APIView):
+class LikeView(APIView):
     """
     { "post_id" = 1 }
     만 들어온다고 가정
+    post() -> 좋아요 추가
+    delete() -> 좋아요 취소
     """
 
-    def get(self, request):
-        print(request.POST['post_id'])
+    def post(self, request, post_id):
+        post = Post.objects.get(pk=post_id)
+        post.liker_set.add(request.user.profile)
+        return Response(post.liker_set.count())
 
-    def post(self, request):
-        print(request.POST['post_id'])
+    def delete(self, request, post_id):
+        post = Post.objects.get(pk=post_id)
+        post.liker_set.remove(request.user.profile)
+        return Response(post.liker_set.count())
