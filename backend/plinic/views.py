@@ -23,6 +23,14 @@ class NoticeViewSet(ModelViewSet):
     queryset = Notice.objects.all()
     serializer_class = NoticeDetailSerializer
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        search = self.request.query_params.get('recent', '')
+        if search == "true":
+            latest_pk = Notice.objects.last().pk
+            qs = Notice.objects.filter(pk=latest_pk)
+        return qs
+
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context['request'] = self.request
