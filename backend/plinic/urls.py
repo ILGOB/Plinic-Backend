@@ -11,4 +11,5 @@ urlpatterns = [
     path('random-thumbnail/', views.RandomThumbnailView.as_view()),
     path('random-playlist/', views.RandomPlayListView.as_view()),
     path("", include(router.urls)),
+    path("posts/<int:id>/likes/", views.LikeAddView.as_view())
 ]

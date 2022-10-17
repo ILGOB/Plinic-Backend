@@ -58,7 +58,7 @@ class NoticeViewSet(ModelViewSet):
         'list': NoticeListSerializer,
         'create': NoticeListSerializer,
         # Recent serailizer
-        'recent' : NoticeRecentSerializer
+        'recent': NoticeRecentSerializer
     }
 
     def get_serializer_class(self):
@@ -142,3 +142,16 @@ class RandomThumbnailView(APIView):
         url = "https://source.unsplash.com/random"
         result_url = requests.get(url)
         return Response({"img_url": result_url.url})
+
+
+class LikeAddView(APIView):
+    """
+    { "post_id" = 1 }
+    만 들어온다고 가정
+    """
+
+    def get(self, request):
+        print(request.POST['post_id'])
+
+    def post(self, request):
+        print(request.POST['post_id'])

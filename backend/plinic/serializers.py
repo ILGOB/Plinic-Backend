@@ -131,6 +131,8 @@ class NoticeListSerializer(NoticeDetailSerializer, TimeStampedSerializer):
 
 
 class NoticeRecentSerializer(NoticeListSerializer):
+    title = serializers.CharField(read_only=True)
+
     class Meta:
         model = Notice
         fields = ["id",
