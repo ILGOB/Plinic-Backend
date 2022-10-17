@@ -29,8 +29,8 @@ class NoticeViewSet(ModelViewSet):
         return context
 
     def perform_create(self, serializer):
-        serializer.save(profile=self.request.user.profile)
-        # return super().perform_create(serializer)
+        serializer.save(author=self.request.user.profile)
+        return super().perform_create(serializer)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
