@@ -140,7 +140,7 @@ class PostListSerializer(serializers.ModelSerializer):
     def get_author(self, obj):
         author = obj.profile
         nickname = author.nickname
-        profile_pic = author.profile_pic if author.profile_pic else None
+        profile_pic = author.profile_pic.url if author.profile_pic else None
         return {"nickname": nickname,
                 "profile_pic": profile_pic}
 
@@ -148,7 +148,7 @@ class PostListSerializer(serializers.ModelSerializer):
         id = obj.playlist.pk
         nickname = obj.profile.nickname
         title = obj.title
-        thumbnail_img_url = obj.playlist.thumbnail if obj.playlist.thumbnail else None
+        thumbnail_img_url = obj.playlist.thumbnail.url if obj.playlist.thumbnail else None
         return {"id": id,
                 "nickname": nickname,
                 "title": title,
