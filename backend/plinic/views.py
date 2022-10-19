@@ -5,6 +5,7 @@ from urllib import request
 import random
 
 import requests
+from django.shortcuts import redirect
 from googleapiclient.errors import HttpError
 from requests.auth import HTTPBasicAuth
 

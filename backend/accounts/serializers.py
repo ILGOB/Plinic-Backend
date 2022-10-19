@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Profile
 
 
-class ProfileSerializer(serializers.ModelSerializer):
+class ProfilePageSerializer(serializers.ModelSerializer):
     """
     내 공개 플레이리스트
     내가 스크랩한 플레이리스트
@@ -37,3 +37,11 @@ class ProfileSerializer(serializers.ModelSerializer):
             }
             for playlist in playlists]
         return playlists_info
+
+
+class AuthorSerializer(ProfilePageSerializer):
+    class Meta:
+        model = Profile
+        fields = ["id",
+                  "nickname",
+                  "profile_img"]
