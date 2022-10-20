@@ -127,7 +127,7 @@ class RandomPlayListView(APIView):
             if int(num) >= 21:
                 return Response({"error": "잘못된 요청입니다."}, status=status.HTTP_400_BAD_REQUEST)
             else:
-                json_val = pl.random_playlist(genre, num)
+                json_val = pl.get_random_playlist(genre, num)
                 return Response(json_val)
 
 
