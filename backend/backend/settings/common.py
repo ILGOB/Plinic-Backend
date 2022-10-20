@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework.authtoken',
+    'drf_yasg',
     # django-rest-auth
     'rest_framework_simplejwt.token_blacklist',
     'dj_rest_auth',
