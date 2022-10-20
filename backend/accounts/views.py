@@ -32,7 +32,6 @@ environ.Env.read_env(
     env_file=os.path.join(BASE_DIR, '.env')
 )
 
-SECRET_KEY = env('SECRET_KEY')
 KAKAO_CALLBACK_URI = env('KAKAO_CALLBACK_URI')
 REST_API_KEY = env('KAKAO_REST_API_KEY')
 

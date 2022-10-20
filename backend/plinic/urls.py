@@ -12,5 +12,7 @@ urlpatterns = [
     path('random-playlist/', views.RandomPlayListView.as_view()),
     path("", include(router.urls)),
     path("posts/<int:post_id>/likes/", views.LikeView.as_view()),
-    path("random-background/", views.RandomBackgroundView.as_view())
+    path("random-background/", views.RandomBackgroundView.as_view()),
+
+    path("get_dummy_data/", views.DummyDataView.as_view())
 ]

@@ -1,26 +1,20 @@
-import json
-from datetime import timedelta
-from urllib import request
-
 import random
 
-import requests
-from django.shortcuts import redirect
-from googleapiclient.errors import HttpError
-from requests.auth import HTTPBasicAuth
+import random
+from datetime import timedelta
 
-from accounts.models import Profile
-from .permissions import PostPermission
-from .utils import playlist_maker as pl
-from rest_framework import status, generics
-from django.http import JsonResponse
+import requests
+from django.http import HttpResponse
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from .models import Post, Track, Playlist, Notice
-from .serializers import PostListSerializer, PostDetailSerializer
+
+from accounts.models import Profile
+from .models import Post, Playlist, Notice
 from .serializers import PlaylistSerializer, NoticeDetailSerializer, NoticeListSerializer, NoticeRecentSerializer
+from .serializers import PostListSerializer, PostDetailSerializer
+from .utils import playlist_maker as pl
 
 
 class NoticeViewSet(ModelViewSet):
@@ -188,3 +182,81 @@ class LikeView(APIView):
         post = Post.objects.get(pk=post_id)
         post.liker_set.remove(request.user.profile)
         return Response(post.liker_set.count())
+
+
+class DummyDataView(APIView):
+    def get(self, request):
+        from plinic.models import Genre, Playlist, Track, Post, Tag
+        from django.contrib.auth import get_user_model
+        import time
+
+        # 임의의 유저 생성
+        try:
+            user1 = get_user_model().objects.create_user(username='dummy',
+                                                         password='dummy')
+            user2 = get_user_model().objects.create_user(username='some_username',
+                                                         password='some_username')
+        except:
+            pass
+
+        # 임의의 장르 생성
+        try:
+            for genre_name in ["k-pop", "j-pop", "fuckin-pop", "rock"]:
+                new_genre = Genre(name=genre_name)
+                new_genre.save()
+        except:
+            pass
+
+        # 임의의 플레이리스트 생성
+        if Playlist.objects.count() > 0:
+            pass
+        else:
+            for i in range(30):
+                new_playlist = Playlist(title=f"{i + 1} 번째 플레이리스트 제목 더미 데이터..",
+                                        total_url="gdsanadev.com",
+                                        profile=Profile.objects.first(),
+                                        genre=random.choice(list(Genre.objects.all())))
+                new_playlist.save()
+
+        # 임의의 트랙 생성
+        if Track.objects.count() > 0:
+            pass
+        else:
+            for i in range(20):
+                new_track = Track(playlist=random.choice(list(Playlist.objects.all())),
+                                  title=f"제목{i + 1} 임........",
+                                  url="gdsanadev.com",
+                                  duration=timedelta(minutes=20))
+                new_track.save()
+
+        # 임의의 게시물 생성
+        if Post.objects.count() > 0:
+            pass
+        else:
+            for i in range(30):
+                new_post = Post(profile=Profile.objects.first(),
+                                title=f"플리닉 {i + 1} 번째 포스팅.",
+                                content=f"플리닉 {i + 1} 번째 포스팅.",
+                                playlist=random.choice(list(Playlist.objects.all())))
+                new_post.save()
+
+        # 임의의 태그 생성
+        if Tag.objects.count() > 0:
+            pass
+        else:
+            for i in range(10):
+                new_tag = Tag(name=f"{i + 1}태그")
+                new_tag.save()
+
+        # 임의의 공지사항 생성
+        if Notice.objects.count() > 0:
+            pass
+        else:
+            for i in range(30):
+                new_notice = Notice(author=Profile.objects.first(),
+                                    title=f"플리닉 {i + 1} 번째 공지사항.",
+                                    content=f"플리닉 {i + 1} 번째 공지사항인데, 날씨가 춥네요. 얼지 마세요...",
+                                    )
+                new_notice.save()
+
+        return HttpResponse("더미 데이터 생성 완료..!")
