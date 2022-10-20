@@ -4,3 +4,10 @@ db.sqlite3
 /venv
 .idea
 media
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
