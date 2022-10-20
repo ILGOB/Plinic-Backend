@@ -2,16 +2,14 @@ import os
 from pathlib import Path
 
 import environ
-import requests, json
+import requests
 from allauth.socialaccount.models import SocialAccount
 from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect
 from rest_framework import status, generics
-from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse_lazy
 
 from .models import Profile
@@ -35,21 +33,24 @@ environ.Env.read_env(
 KAKAO_CALLBACK_URI = env('KAKAO_CALLBACK_URI')
 REST_API_KEY = env('KAKAO_REST_API_KEY')
 
-SERVER_IP = "http://35.79.181.245:8000/"
+SERVER_IP = "http://127.0.0.1:8000"
 
 LOGIN_STRAT_URL = reverse_lazy('kakao_login_start')
 LOGIN_FINISH_URL = reverse_lazy('kakao_login_finish')
 LOGIN_CALLBACK_MANAGE_URL = reverse_lazy('kakao-callback')
 
-
+# REST API 키, CALLBACK URI 를 담아 카카오 인증 서버에 로그인 요청
+# 로그인 창이 뜸, 혹은 이전에 로그인된 적이 있다면 장고 서버에서 서버만의 JWT 발급
 def kakao_login_view(request):
-    print("----------kakao login view 호출----------")
     redirect_response = HttpResponseRedirect(
         f"https://kauth.kakao.com/oauth/authorize?client_id={REST_API_KEY}&redirect_uri={KAKAO_CALLBACK_URI}&response_type=code"
     )
     return redirect_response
 
 
+# 위의 kakao_login_view 에서 적절한 비밀번호와 이메일을 입력했다면,
+# 이곳에서는 회원가입 / 로그인 을 진행한 후 JWT 발급
+# 내부적으로, KkaoLoginView 에 POST 요청 보냄
 def kakao_callback_view(request):
     """
     인가 코드로 카카오 인증 서버로 Access Token Request
@@ -71,6 +72,7 @@ def kakao_callback_view(request):
     profile_request = requests.get(
         "https://kapi.kakao.com/v2/user/me", headers={"Authorization": f"Bearer {access_token}"}).json()
     kakao_account = profile_request.get('kakao_account')
+    print(kakao_account)
     email = kakao_account.get('email')
 
     # 위에서 받아온 이메일로 서버 내 데이터베이스에서 유저를 찾고,
@@ -79,11 +81,12 @@ def kakao_callback_view(request):
 
     # 데이터베이스에 카카오에서 받아온 이메일을 정보로 가지고 있는 유저가 있다면 로그인, 아니면 회원가입
     if user:
-        try:
-            # SocialAccount 모델에서 해당 유저를 찾고, social_user 에는 해당 객체가 담김
-            social_user = SocialAccount.objects.get(user=user)
-        except:
-            # SocialAccount 모델에 해당 유저가 존재하지 않는다면, social_user 에는 None 으로 담김
+        # SocialAccount 모델에서 해당 유저를 찾고, social_user 에는 해당 객체가 담김
+        social_user_qs = SocialAccount.objects.filter(user=user)
+        print(social_user_qs)
+        if social_user_qs:
+            social_user = social_user_qs.first()
+        else:
             social_user = None
 
         if social_user is None:
@@ -101,9 +104,9 @@ def kakao_callback_view(request):
         if accept.status_code != 200:
             return JsonResponse({'error': '회원가입에 실패했습니다.'}, status=accept.status_code)
 
-        print(accept.status_code)
         accept_json = accept.json()
         accept_json.pop('user', None)
+
         return JsonResponse(accept_json)
 
     # 기존에 가입된 유저가 없으면 새로 가입
@@ -116,11 +119,11 @@ def kakao_callback_view(request):
             return HttpResponse(accept)
         accept_json = accept.json()
         accept_json.pop('user', None)
-        return JsonResponse(accept_json, safe=False)
+
+        return JsonResponse(accept_json)
 
 
 class KakaoLoginView(SocialLoginView):
-    print("----------final kakao login view 호출----------")
     adapter_class = KakaoOAuth2Adapter
     client_class = OAuth2Client
     callback_url = KAKAO_CALLBACK_URI

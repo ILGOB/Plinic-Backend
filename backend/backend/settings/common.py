@@ -5,7 +5,6 @@ import environ
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
-print(BASE_DIR)
 ROOT_DIR = os.path.dirname(BASE_DIR)
 
 env = environ.Env(DEBUG=(bool, True))
