@@ -1,3 +1,7 @@
+import os
+from pathlib import Path
+
+import environ
 import requests, json
 from allauth.socialaccount.models import SocialAccount
 from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
@@ -22,8 +26,15 @@ class ProfilePageView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'nickname'
 
 
-KAKAO_CALLBACK_URI = "http://127.0.0.1:8000/api/v1/accounts/kakao-authentication/callback/"
-REST_API_KEY = "e3a3cafb8f3c120fefe2133dc74dce85"
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+env = environ.Env(DEBUG=(bool, True))
+environ.Env.read_env(
+    env_file=os.path.join(BASE_DIR, '.env')
+)
+
+SECRET_KEY = env('SECRET_KEY')
+KAKAO_CALLBACK_URI = env('KAKAO_CALLBACK_URI')
+REST_API_KEY = env('KAKAO_REST_API_KEY')
 
 SERVER_IP = "http://35.79.181.245:8000/"
 
