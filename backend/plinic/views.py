@@ -37,8 +37,8 @@ class NoticeViewSet(ModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        search = self.request.query_params.get("recent", "")
-        if search == "true":
+        recent = self.request.query_params.get("recent", "")
+        if recent == "true":
             self.pagination_class = None
             latest_pk = Notice.objects.last().pk
             qs = Notice.objects.filter(pk=latest_pk)
@@ -52,6 +52,15 @@ class NoticeViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user.profile)
         return super().perform_create(serializer)
+
+    def list(self, request, *args, **kwargs):
+        data = self.get_queryset().first()
+        serializer = self.get_serializer(data=data)
+        recent = self.request.query_params.get("recent", "")
+        if recent == "true":
+            data = super(NoticeViewSet, self).list(request=request).data[0]
+            return Response(data)
+        return super(NoticeViewSet, self).list(request=request)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -184,7 +193,6 @@ class RandomPlayListView(APIView):
 
 class PlaylistListView(ListAPIView):
     def get_queryset(self):
-        print(self.kwargs)
         profile = Profile.objects.get(nickname=self.kwargs["nickname"])
         qs = Playlist.objects.filter(profile=profile)
         return qs
