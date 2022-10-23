@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('plinic', '0005_alter_playlist_scrapper_set'),
+        ("plinic", "0005_alter_playlist_scrapper_set"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='playlist',
-            name='thumbnail',
-            field=models.ImageField(blank=True, upload_to='thumbnails/%Y/%m/%d'),
+            model_name="playlist",
+            name="thumbnail",
+            field=models.ImageField(blank=True, upload_to="thumbnails/%Y/%m/%d"),
         ),
     ]

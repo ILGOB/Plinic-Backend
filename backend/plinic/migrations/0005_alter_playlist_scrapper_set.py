@@ -6,14 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0002_alter_profile_nickname'),
-        ('plinic', '0004_alter_post_voter_set'),
+        ("accounts", "0002_alter_profile_nickname"),
+        ("plinic", "0004_alter_post_voter_set"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='playlist',
-            name='scrapper_set',
-            field=models.ManyToManyField(blank=True, related_name='playlist_scrapper_set', to='accounts.Profile'),
+            model_name="playlist",
+            name="scrapper_set",
+            field=models.ManyToManyField(
+                blank=True, related_name="playlist_scrapper_set", to="accounts.Profile"
+            ),
         ),
     ]

@@ -7,13 +7,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('plinic', '0001_initial'),
+        ("plinic", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='post',
-            name='tag_set',
-            field=models.ManyToManyField(blank=True, to='plinic.Tag'),
+            model_name="post",
+            name="tag_set",
+            field=models.ManyToManyField(blank=True, to="plinic.Tag"),
         ),
     ]

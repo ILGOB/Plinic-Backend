@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('plinic', '0013_alter_playlist_title'),
+        ("plinic", "0013_alter_playlist_title"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='notice',
-            name='title',
+            model_name="notice",
+            name="title",
             field=models.CharField(max_length=30),
         ),
         migrations.AlterField(
-            model_name='playlist',
-            name='title',
-            field=models.CharField(default='tempList', max_length=30),
+            model_name="playlist",
+            name="title",
+            field=models.CharField(default="tempList", max_length=30),
         ),
         migrations.AlterField(
-            model_name='track',
-            name='title',
+            model_name="track",
+            name="title",
             field=models.CharField(max_length=30),
         ),
     ]

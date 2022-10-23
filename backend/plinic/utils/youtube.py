@@ -8,17 +8,15 @@ import environ
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-'''
+"""
 검색 단어를 받아 유튜브 링크를 반환
-'''
+"""
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 env = environ.Env(DEBUG=(bool, True))
-environ.Env.read_env(
-    env_file=os.path.join(BASE_DIR, '.env')
-)
-SECRET_KEY = env('SECRET_KEY')
-DEBUG = env('DEBUG')
-DEVELOPER_KEY = env('YOUTUBE_DEVELOPER_KEY')
+environ.Env.read_env(env_file=os.path.join(BASE_DIR, ".env"))
+SECRET_KEY = env("SECRET_KEY")
+DEBUG = env("DEBUG")
+DEVELOPER_KEY = env("YOUTUBE_DEVELOPER_KEY")
 
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
@@ -33,26 +31,36 @@ def get_youtube_track_data_by_word(word):
               'url': 'youtube.com/watch?v=2M90FlZB8PU'}
     """
 
-    youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
-                    developerKey=DEVELOPER_KEY)
+    youtube = build(
+        YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=DEVELOPER_KEY
+    )
 
     try:
-        search_response = youtube.search().list(type="video",
-                                                part="snippet",
-                                                q=word,
-                                                maxResults=1).execute()
+        search_response = (
+            youtube.search()
+            .list(type="video", part="snippet", q=word, maxResults=1)
+            .execute()
+        )
     except HttpError as e:
         print(e)
 
     try:
         for search_result in search_response.get("items", []):
-            video_id = search_result['id']['videoId']
-            title = search_result['snippet']['title']
+            video_id = search_result["id"]["videoId"]
+            title = search_result["snippet"]["title"]
             url = f"youtube.com/watch?v={video_id}"
 
-            url_for_duration = "https://www.googleapis.com/youtube/v3/videos?id=" + video_id + "&key=" + DEVELOPER_KEY + "&part=contentDetails "
+            url_for_duration = (
+                "https://www.googleapis.com/youtube/v3/videos?id="
+                + video_id
+                + "&key="
+                + DEVELOPER_KEY
+                + "&part=contentDetails "
+            )
             response = urllib.request.urlopen(url_for_duration).read()
-            duration_data = json.loads(response)['items'][0]['contentDetails']['duration']
+            duration_data = json.loads(response)["items"][0]["contentDetails"][
+                "duration"
+            ]
 
             if 7 < len(duration_data) <= 11 and "H" in duration_data:
                 t = datetime.strptime(duration_data, "PT%HH%MM%SS")

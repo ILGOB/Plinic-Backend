@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('plinic', '0009_auto_20220913_2125'),
+        ("plinic", "0009_auto_20220913_2125"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='track',
-            name='duration',
+            model_name="track",
+            name="duration",
             field=models.DurationField(),
         ),
     ]
