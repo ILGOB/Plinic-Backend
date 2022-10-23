@@ -1,11 +1,10 @@
 import random
-
-import random
 from datetime import timedelta
 
 import requests
 from django.http import HttpResponse
 from rest_framework import status
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -23,6 +22,16 @@ from .utils import playlist_maker as pl
 
 
 class NoticeViewSet(ModelViewSet):
+    """
+    공지사항을 처리하는 APIView
+
+    공지사항 관련 권한 설정:
+        GET     : 로그인된 모든 유저
+        POST    : 모든 관리자
+        PUT     : 모든 관리자
+        DELETE  : 모든 관리자
+    """
+
     queryset = Notice.objects.all()
     serializer_class = NoticeDetailSerializer
 
@@ -72,10 +81,19 @@ class NoticeViewSet(ModelViewSet):
 
 
 class PostViewSet(ModelViewSet):
+    """
+    게시물을 처리하는 APIView
+
+    공지사항 관련 권한 설정:
+        GET     : 로그인된 모든 유저
+        POST    : 로그인된 모든 유저
+        PUT     : 로그인 된, 게시물의 저자 본인만
+        DELETE  : 로그인 된, 게시물의 저자 본인만
+
+    """
+
     queryset = Post.objects.all().order_by("-pk")
     serializer_class = PostDetailSerializer
-
-    # permission_classes = (PostPermission,)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -107,78 +125,17 @@ class PostViewSet(ModelViewSet):
         return super(PostViewSet, self).get_serializer_class()
 
 
-class RandomPlayListView(APIView):
-    """
-    랜덤 플레이리스트 조회 기능
-    """
-
-    def get(self, request):
-        if ("genre" not in request.GET) or ("num" not in request.GET):
-            # 'genre', 'num' 이 querystring 으로 안 들어오면 에러 메시지 출력
-            return Response({"error": "잘못된 요청입니다."}, status=status.HTTP_400_BAD_REQUEST)
-
-        else:
-            # TODO : 장르가 우리가 지정한 장르가 아닐경우 오류메세지 출력
-            genre = request.GET["genre"]
-            num = request.GET["num"]
-            if int(num) >= 21:
-                return Response(
-                    {"error": "잘못된 요청입니다."}, status=status.HTTP_400_BAD_REQUEST
-                )
-            else:
-                json_val = pl.get_random_playlist(genre, num)
-                return Response(json_val)
-
-
-class PlaylistViewSet(ModelViewSet):
-    """
-    list 에 대한 GET, POST (목록 조회 및 생성)
-    detail 에 대한 GET, PUT, DELETE (상세 플레이리스트 조회, 수정, 삭제)
-    수정은 "제목" 만 가능해야 함.
-    """
-
-    queryset = Playlist.objects.all()
-    serializer_class = PlaylistSerializer
-
-
-class RandomBackgroundView(APIView):
-    def get(self, request):
-        id_list = [
-            "3116500",
-            "3116506",
-            "5197762",
-            "2697038",
-            "3211457",
-            "857136",
-            "2962724",
-        ]
-        url = "https://api.pexels.com/videos/videos/"
-        api_key = "563492ad6f91700001000001f4e83ff4703f4a20a5a558a554e11d9f"
-
-        headers = {"Content-type": "application/json", "Authorization": api_key}
-
-        id = random.choice(id_list)
-        response = requests.get(url=url + id, headers=headers).json()["video_files"]
-        print(response)
-        return Response({"background_url": response[0]["link"]})
-
-
-class RandomThumbnailView(APIView):
-    def get(self, request):
-        url = "https://source.unsplash.com/random"
-        result_url = requests.get(url)
-        return Response({"img_url": result_url.url})
-
-
 class LikeView(APIView):
     """
-    { "post_id" = 1 }
-    만 들어온다고 가정
-    post() -> 좋아요 추가
-    delete() -> 좋아요 취소
+    게시물 좋아요/ 좋아요 취소를 처리하는 APIView
+
+    게시물 좋아요/ 좋아요 취소 관련 권한 설정:
+        PUT     : 로그인 된 모든 유저
+        DELETE  : 로그인 된 모든 유저
+
     """
 
-    def post(self, request, post_id):
+    def put(self, request, post_id):
         post = Post.objects.get(pk=post_id)
         post.liker_set.add(request.user.profile)
         return Response(
@@ -199,8 +156,80 @@ class LikeView(APIView):
         )
 
 
-class pasdfss:
-    pass
+class RandomPlayListView(APIView):
+    """
+    랜덤 플레이리스트 조회를 처리하는 APIView
+
+    랜덤 플레이리스트 조회 관련 권한 설정:
+        GET     : 로그인된 모든 유저
+    """
+
+    def get(self, request):
+        if ("genre" not in request.GET) or ("num" not in request.GET):
+            # 'genre', 'num' 이 querystring 으로 안 들어오면 에러 메시지 출력
+            return Response({"error": "잘못된 요청입니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            # TODO : 장르가 우리가 지정한 장르가 아닐경우 오류메세지 출력
+            genre = request.GET["genre"]
+            num = request.GET["num"]
+            if int(num) >= 21:
+                return Response(
+                    {"error": "잘못된 요청입니다."}, status=status.HTTP_400_BAD_REQUEST
+                )
+            else:
+                json_val = pl.get_random_playlist(genre, num)
+                return Response(json_val)
+
+
+class PlaylistListView(ListAPIView):
+    def get_queryset(self):
+        print(self.kwargs)
+        profile = Profile.objects.get(nickname=self.kwargs["nickname"])
+        qs = Playlist.objects.filter(profile=profile)
+        return qs
+
+    serializer_class = PlaylistSerializer
+
+
+class ScrapView(APIView):
+    """
+    특정 플레이리스트의 스크랩, 스크랩 취소를 처리하는 APIView
+
+    스크랩에 대한 권한 설정 :
+        PUT     : 로그인 된 모든 유저
+        DELETE  : 로그인 된 모든 유저
+    """
+
+    def put(self, request, playlist_id):
+        """플레이리스트를 스크랩 목록에 추가"""
+        playlist = Playlist.objects.get(pk=playlist_id)
+        playlist.scrapper_set.add(request.user.profile)
+        scrapped_playlists_qs = request.user.profile.playlist_scrapper_set.all()
+        scrapped_playlists_names = [
+            playlist.title for playlist in scrapped_playlists_qs
+        ]
+        return Response(
+            {
+                "success": "플레이리스트 '{}' 를 스크랩했습니다. ".format(playlist.title),
+                "scrapped_playlists": scrapped_playlists_names,
+            }
+        )
+
+    def delete(self, request, playlist_id):
+        """플레이리스트를 스크랩 목록에서 제거"""
+        playlist = Playlist.objects.get(pk=playlist_id)
+        playlist.scrapper_set.remove(request.user.profile)
+        scrapped_playlists_qs = request.user.profile.playlist_scrapper_set.all()
+        scrapped_playlists_names = [
+            playlist.title for playlist in scrapped_playlists_qs
+        ]
+        return Response(
+            {
+                "success": "플레이리스트 '{}' 를 스크랩 취소했습니다. ".format(playlist.title),
+                "scrapped_playlists": scrapped_playlists_names,
+            }
+        )
 
 
 class DummyDataView(APIView):
@@ -288,3 +317,32 @@ class DummyDataView(APIView):
                 new_notice.save()
 
         return HttpResponse("더미 데이터 생성 완료..!")
+
+
+class RandomBackgroundView(APIView):
+    def get(self, request):
+        id_list = [
+            "3116500",
+            "3116506",
+            "5197762",
+            "2697038",
+            "3211457",
+            "857136",
+            "2962724",
+        ]
+        url = "https://api.pexels.com/videos/videos/"
+        api_key = "563492ad6f91700001000001f4e83ff4703f4a20a5a558a554e11d9f"
+
+        headers = {"Content-type": "application/json", "Authorization": api_key}
+
+        id = random.choice(id_list)
+        response = requests.get(url=url + id, headers=headers).json()["video_files"]
+        print(response)
+        return Response({"background_url": response[0]["link"]})
+
+
+class RandomThumbnailView(APIView):
+    def get(self, request):
+        url = "https://source.unsplash.com/random"
+        result_url = requests.get(url)
+        return Response({"img_url": result_url.url})

@@ -1,17 +1,22 @@
-from rest_framework.routers import DefaultRouter, SimpleRouter
+from rest_framework.routers import SimpleRouter
 from django.urls import path, include
 from . import views
 
-router = SimpleRouter()
-router.register("posts", views.PostViewSet)
-router.register("playlists", views.PlaylistViewSet)
-router.register("notices", views.NoticeViewSet)
+post_router = SimpleRouter()
+post_router.register("posts", views.PostViewSet)
+
+notice_router = SimpleRouter()
+notice_router.register("notices", views.NoticeViewSet)
+
 
 urlpatterns = [
+    path("", include(post_router.urls)),
+    path("", include(notice_router.urls)),
     path("random-thumbnail/", views.RandomThumbnailView.as_view()),
     path("random-playlist/", views.RandomPlayListView.as_view()),
-    path("", include(router.urls)),
     path("posts/<int:post_id>/likes/", views.LikeView.as_view()),
+    path("playlists/<int:playlist_id>/scrappers/", views.ScrapView.as_view()),
+    path("playlists/<str:nickname>/", views.PlaylistListView.as_view()),
     path(
         "random-background/",
         views.RandomBackgroundView.as_view(),
