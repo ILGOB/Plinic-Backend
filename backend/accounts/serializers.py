@@ -63,7 +63,9 @@ class PrivateProfileSerializer(PublicProfilePageSerializer):
             "written_posts",
         ]
 
+    written_posts = serializers.SerializerMethodField()
     private_playlists = serializers.SerializerMethodField()
+    scrapped_playlists = serializers.SerializerMethodField()
 
     def get_private_playlists(self, obj):
         playlists = obj.playlist_profile_set.filter(is_public=False)
@@ -74,6 +76,21 @@ class PrivateProfileSerializer(PublicProfilePageSerializer):
                 "id": playlist.id,
             }
             for playlist in playlists
+        ]
+        return playlists_info
+
+    def get_written_posts(self, obj):
+        posts = obj.post_set.all()
+        posts_info = [
+            {"id": posts.id, "title": posts.title, "content": posts.content}
+            for posts in posts
+        ]
+        return posts_info
+
+    def get_scrapped_playlists(self, obj):
+        playlists = obj.playlist_scrapper_set.all()
+        playlists_info = [
+            {"title": playlist.title, "id": playlist.id} for playlist in playlists
         ]
         return playlists_info
 
