@@ -34,7 +34,12 @@ class ProfilePageSerializer(serializers.ModelSerializer):
     def get_my_playlists(self, obj):
         playlists = obj.playlist_profile_set.all()
         playlists_info = [
-            {"title": playlist.title, "id": playlist.id} for playlist in playlists
+            {
+                "title": playlist.title,
+                "thumbnail": playlist.thumbnail,
+                "id": playlist.id,
+            }
+            for playlist in playlists
         ]
         return playlists_info
 
