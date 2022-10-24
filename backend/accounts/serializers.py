@@ -36,7 +36,7 @@ class ProfilePageSerializer(serializers.ModelSerializer):
         playlists_info = [
             {
                 "title": playlist.title,
-                "thumbnail": playlist.thumbnail,
+                "thumbnail": playlist.thumbnail.url,
                 "id": playlist.id,
             }
             for playlist in playlists
