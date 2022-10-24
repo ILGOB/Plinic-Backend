@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from accounts.models import Profile
-from .models import Post, Playlist, Notice
+from .models import Post, Playlist, Notice, Tag, Genre
 from .serializers import (
     PlaylistSerializer,
     NoticeDetailSerializer,
@@ -163,6 +163,13 @@ class LikeView(APIView):
                 "liker_count": post.liker_set.count(),
             }
         )
+
+
+class GenreListView(APIView):
+    def get(self, request):
+        genres = Genre.objects.all()
+        genre_names = [genre.name for genre in genres]
+        return Response(genre_names)
 
 
 class RandomPlayListView(APIView):

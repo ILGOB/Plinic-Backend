@@ -12,6 +12,7 @@ notice_router.register("notices", views.NoticeViewSet)
 urlpatterns = [
     path("", include(post_router.urls)),
     path("", include(notice_router.urls)),
+    path("genres/", views.GenreListView.as_view()),
     path("random-thumbnail/", views.RandomThumbnailView.as_view()),
     path("random-playlist/", views.RandomPlayListView.as_view()),
     path("posts/<int:post_id>/likes/", views.LikeView.as_view()),
