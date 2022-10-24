@@ -244,22 +244,67 @@ class DummyDataView(APIView):
     def get(self, request):
         from plinic.models import Genre, Playlist, Track, Post, Tag
         from django.contrib.auth import get_user_model
-        import time
 
-        # 임의의 유저 생성
+        # 임의의 유저 5명 생성
         try:
-            user1 = get_user_model().objects.create_user(
-                username="dummy", password="dummy"
-            )
-            user2 = get_user_model().objects.create_user(
-                username="some_username", password="some_username"
-            )
+            username_lists = [
+                "Lami",
+                "taeyoung2da",
+                "goddessana",
+                "woin2ee",
+                "blooper20",
+            ]
+            for username in username_lists:
+                get_user_model().objects.create_user(
+                    username=username, password=username
+                )
         except:
             pass
 
         # 임의의 장르 생성
         try:
-            for genre_name in ["k-pop", "j-pop", "fuckin-pop", "rock"]:
+            for genre_name in [
+                "acoustic",
+                "blues",
+                "classical",
+                "jazz",
+                "children",
+                "disney",
+                "hip - hop",
+                "rock",
+                "j - pop",
+                "k - pop",
+                "new - age",
+                "opera",
+                "pop",
+                "reggae",
+                "tango",
+                "techno",
+                "singer",
+                "songwriter",
+                "R & B",
+                "british",
+                "disco",
+                "new - release",
+                "movies",
+                "soundtracks",
+                "edm",
+                "sleep",
+                "soul",
+                "study",
+                "summer",
+                "road",
+                "trip",
+                "rainy",
+                "day",
+                "dance",
+                "holidays",
+                "party",
+                "work",
+                "out",
+                "sad",
+                "romance",
+            ]:
                 new_genre = Genre(name=genre_name)
                 new_genre.save()
         except:
@@ -269,37 +314,62 @@ class DummyDataView(APIView):
         if Playlist.objects.count() > 0:
             pass
         else:
-            for i in range(30):
+            playlist_title_list = [
+                "🎄 Happy Christmas 🎄",
+                "나는 잠이 올것이다",
+                "힙합",
+                "애플의 광고 음악 같은",
+                "짝사랑할 때 듣는 노래",
+                "최강 디즈니",
+                "🕺🏻딴수딴수🕺🏻",
+            ]
+            for title in playlist_title_list:
                 new_playlist = Playlist(
-                    title=f"{i + 1} 번째 플레이리스트 제목 더미 데이터..",
-                    total_url="gdsanadev.com",
+                    title=title,
+                    total_url="https://www.youtube.com/watch?v=hDphjzXZW-4&list=TLGG-gDeQ2YlcRMyNDEwMjAyMg",
                     profile=Profile.objects.first(),
                     genre=random.choice(list(Genre.objects.all())),
                 )
                 new_playlist.save()
 
         # 임의의 트랙 생성
-        if Track.objects.count() > 0:
+        if Track.objects.all().count() > 0:
             pass
         else:
-            for i in range(20):
-                new_track = Track(
-                    playlist=random.choice(list(Playlist.objects.all())),
-                    title=f"제목{i + 1} 임........",
-                    url="gdsanadev.com",
-                    duration=timedelta(minutes=20),
-                )
-                new_track.save()
+            new_track1 = Track(
+                playlist=random.choice(list(Playlist.objects.all())),
+                title="영탁(제이심포니) - 너에게 가는 길(20120504 희망TV)",
+                url="https://www.youtube.com/watch?v=ihlpYVDUq0w",
+                duration=timedelta(seconds=300),
+            )
+            new_track1.save()
+            new_track2 = Track(
+                playlist=random.choice(list(Playlist.objects.all())),
+                title="[4K] 'Alcohol-Free' The Ellen DeGeneres Show Full Performance",
+                url="https://www.youtube.com/watch?v=FRvPXtvfg1w&list=RDGMEM0s70dY0AfCwh3LqQ-Bv1xgVMFRvPXtvfg1w&start_radio=1",
+                duration=timedelta(seconds=300),
+            )
+            new_track2.save()
 
         # 임의의 게시물 생성
         if Post.objects.count() > 0:
             pass
         else:
-            for i in range(30):
+            post_list = {
+                "크리스마스 노래 듣고 싶지 않으세여!??!??!??": "이제 곧 #크리스마스 잖아여!!!!!!!!!!!! 이 노래 듣고 연말 느낌을 내보자구요 꺄아",
+                "💤 잠이 오지 않는 밤": "잠이 오지 않아 #잠이솔솔 #쿨쿨자라 #꿀잠비법",
+                "🎶 노동요 추천 | 일할 때 듣는 노래 🎶": "난 이거 틀고 일해 #노동요",
+                "Apple CM (Style..) Songs 🍎": "애플의 광고 음악은 굉장합니다.애플이 세계를 지배할 것 입니다.감각적인 플레이리스트 음악을 들어보시죠.",
+                "난 선생이고 넌 학생이야": "여러분, #사랑 이란 무엇이라 생각하십니까.??!!!?!?!?!?!? 이뤄지기 힘든 #사랑 을 mu-sic으로 표현해봤읍니다.",
+                "디즈니니니": "제가 #디즈니 를 참 좋아하는데요",
+                "내가 이 구역의 댄.스.머.신": "이 구역을 접수하러 왔다",
+                "외롭게 코딩하고 계신가요?": "외로운 #밤 을 같이 보내 줄 음악 듣고 가시죠. ^^",
+            }
+            for data in list(post_list.items()):
                 new_post = Post(
                     profile=Profile.objects.first(),
-                    title=f"플리닉 {i + 1} 번째 포스팅.",
-                    content=f"플리닉 {i + 1} 번째 포스팅.",
+                    title=data[0],
+                    content=data[1],
                     playlist=random.choice(list(Playlist.objects.all())),
                 )
                 new_post.save()
@@ -308,19 +378,45 @@ class DummyDataView(APIView):
         if Tag.objects.count() > 0:
             pass
         else:
-            for i in range(10):
-                new_tag = Tag(name=f"{i + 1}태그")
+            tag_list = [
+                "크리스마스",
+                "잠이솔솔",
+                "쿨쿨자라",
+                "꿀잠비법",
+                "노동요",
+                "애플",
+                "Apple",
+                "CM",
+                "사랑",
+                "디즈니",
+            ]
+            for name in tag_list:
+                new_tag = Tag(name=name)
                 new_tag.save()
 
         # 임의의 공지사항 생성
         if Notice.objects.count() > 0:
             pass
         else:
-            for i in range(30):
+            notice_list = {
+                "[Plinic] 서버 정기점검 안내": "오늘 오전 3시부터 11시까지 서버 정기점검이 있을 예정입니다.",
+                "[Plinic] 커뮤니티 공지사항입니다.": "제발 가입 좀 해 주세요. 감사합니다.",
+                "[Plinic] 악성 유저 강제탈퇴 안내": "악성 유저는 운영진에서 모니터링 후 경고, 강제탈퇴 예정입니다.",
+                "[Plinic] 데이터 센터 화재 이슈로 인한 서비스 에러 안내": """화재 사고 발생 직후부터 모든 카카오 임직원은 서비스 정상화를 위해 총력을 다하고 있습니다. 현재 대부분의 서비스가 정상화됐습니다. 저희의 준비 및 대응 상황이 이용자분들의 기대에 미치지 못해 장시간 동안 큰 불편을 드렸습니다.
+                지난 주말, 소통에 불편을 겪으셨을 이용자분들, 택시 호출을 받지 못한 기사님, 광고 채널을 이용하지 못하신 사장님 등 카카오 서비스를 이용하고 계신 이용자와 파트너분들을 생각하면 더욱 마음이 무거워집니다.
+                잃어버린 신뢰를 회복하는데 그 어느 때보다 크고 오랜 노력이 필요하다는 것을 알고 있습니다. 이번 일을 계기로 카카오 전체의 시스템을 점검하고 쇄신하겠습니다. 이용자분들께서 다시 안심하고 편리하게 카카오 서비스를 사용하실 수 있는 환경을 구축하고, 이용자 여러분의 신뢰를 회복하기 위해 최선의 노력을 다하겠습니다.
+                관계 당국의 우려 역시 어느 때보다 무겁게 받아들이며, 조사와 요청에 성실하게 협조하겠습니다. 모든 서비스가 정상화되는 대로 이번 사건에 대해 원인을 철저히 규명하고, 이러한 일이 또다시 발생하지 않도록 최대한의 조치를 취해 나갈 것을 약속드립니다.
+                마지막으로 말씀드리겠습니다. 저는 카카오의 서비스를 책임지는 각자 대표로서 그 어느 때보다 참담한 심정과 막중한 책임을 통감하며, 카카오의 쇄신과 변화에 대한 의지를 다지고자 대표이사직을 내려놓고, 이번 사태에 끝까지 책임을 지고자 비상대책위원회 재발방지소위를 맡아, 부족한 부분과 필요한 부분을 채워나가는 일에만 전념하겠습니다. 
+                나아가 카카오뿐만 아니라, 대한민국 IT 업계 전반에 이와 같은 일들이 일어나지 않게, 작게나마 도움이 될 수 있도록 이번 사건이 마무리될 때까지 더욱 무거운 책임감으로 임하겠습니다.
+                우리뿐 아니라 업계 전체의 재발을 방지하려면 스스로의 치부를 드러내야 할 수도 있습니다. 하지만 이것도 카카오의 의무라고 생각합니다. '모든 항공 규정은 피로 쓰였다'라는 말이 있습니다. 이는 비행을 하며 일어난 수많은 사고와 사례 공유를 통해 좀 더 안전한 하늘길이 이뤄졌다는 뜻입니다. 우리 IT 산업도 이 길을 갔으면 합니다.\
+                이번 기회를 통해 처절하게 반성하고 사회에 공유하며 마지막 소임을 다하고자 합니다.""",
+            }
+
+            for data in notice_list.items():
                 new_notice = Notice(
                     author=Profile.objects.first(),
-                    title=f"플리닉 {i + 1} 번째 공지사항.",
-                    content=f"플리닉 {i + 1} 번째 공지사항인데, 날씨가 춥네요. 얼지 마세요...",
+                    title=data[0],
+                    content=data[1],
                 )
                 new_notice.save()
 
