@@ -50,6 +50,7 @@ class PlaylistSerializer(serializers.ModelSerializer):
             "genre_id",
             "is_scrapped",
             "scrapper_count",
+            "is_public",
         ]
 
     def get_is_scrapped(self, obj):
@@ -103,7 +104,6 @@ class PostListSerializer(serializers.ModelSerializer):
     is_like = serializers.SerializerMethodField()
     author = serializers.SerializerMethodField()
     playlist_info = serializers.SerializerMethodField()
-    # author = AuthorSerializer(source='profile')
     playlist_id = serializers.PrimaryKeyRelatedField(
         queryset=Playlist.objects.all(), source="playlist", write_only=True
     )

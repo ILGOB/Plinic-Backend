@@ -13,16 +13,7 @@ from rest_framework import status, generics
 from rest_framework.reverse import reverse_lazy
 
 from .models import Profile
-from .serializers import ProfilePageSerializer
-
-
-class ProfilePageView(generics.RetrieveUpdateDestroyAPIView):
-    def get_queryset(self):
-        return Profile.objects.filter(nickname=self.kwargs["nickname"])
-
-    serializer_class = ProfilePageSerializer
-    lookup_field = "nickname"
-
+from .serializers import PublicProfilePageSerializer, PrivateProfileSerializer
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 env = environ.Env(DEBUG=(bool, True))
@@ -36,6 +27,23 @@ SERVER_IP = "http://127.0.0.1:8000"
 LOGIN_STRAT_URL = reverse_lazy("kakao_login_start")
 LOGIN_FINISH_URL = reverse_lazy("kakao_login_finish")
 LOGIN_CALLBACK_MANAGE_URL = reverse_lazy("kakao-callback")
+
+
+class ProfilePageView(generics.RetrieveUpdateDestroyAPIView):
+    lookup_field = "nickname"
+
+    def get_queryset(self):
+        return Profile.objects.filter(nickname=self.kwargs["nickname"])
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
+
+    def get_serializer_class(self):
+        if self.request.user.profile == self.get_object():
+            return PrivateProfileSerializer
+        return PublicProfilePageSerializer
 
 
 def kakao_login_view(request):
