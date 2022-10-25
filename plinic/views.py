@@ -457,3 +457,6 @@ class RandomThumbnailView(APIView):
         url = "https://source.unsplash.com/random"
         result_url = requests.get(url)
         return Response({"img_url": result_url.url})
+
+
+#
