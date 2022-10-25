@@ -28,7 +28,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework.authtoken",
     "drf_yasg",
-    "sslserver",
     # django-rest-auth
     "rest_framework_simplejwt.token_blacklist",
     "dj_rest_auth",
