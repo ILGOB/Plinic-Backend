@@ -4,7 +4,7 @@ from datetime import timedelta
 import environ
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 ROOT_DIR = os.path.dirname(BASE_DIR)
 
 env = environ.Env(DEBUG=(bool, True))
