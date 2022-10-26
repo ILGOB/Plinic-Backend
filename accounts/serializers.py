@@ -4,9 +4,10 @@ from .models import Profile
 
 class PublicProfilePageSerializer(serializers.ModelSerializer):
     """
-    자신의 마이페이지에 접근했을 때
-    내 공개 / 비공개 플레이리스트
-    내가 스크랩한 플레이리스트
+    남의 마이페이지에 접근했을 때
+    1. 남의 공개 플레이리스트
+    2. 남이 스크랩한 플레이리스트
+    3. 남이 쓴 글
     """
 
     profile_img = serializers.ImageField(source="profile_pic")
@@ -37,7 +38,7 @@ class PublicProfilePageSerializer(serializers.ModelSerializer):
         playlists_info = [
             {
                 "title": playlist.title,
-                "thumbnail": playlist.thumbnail.url,
+                "thumbnail": playlist.thumbnail.url if playlist.thumbnail else None,
                 "id": playlist.id,
             }
             for playlist in playlists
@@ -53,6 +54,14 @@ class PublicProfilePageSerializer(serializers.ModelSerializer):
 
 
 class PrivateProfileSerializer(PublicProfilePageSerializer):
+    """
+    자신의 마이페이지에 접근했을 때
+    1. 내 공개 플레이리스트
+    2. 내 비공개 플레이리스트
+    3. 내가 스크랩한 플레이리스트
+    3. 내가 쓴 글
+    """
+
     class Meta:
         model = Profile
         fields = [
@@ -60,6 +69,7 @@ class PrivateProfileSerializer(PublicProfilePageSerializer):
             "profile_img",
             "public_playlists",
             "private_playlists",
+            "scrapped_playlists",
             "written_posts",
         ]
 
