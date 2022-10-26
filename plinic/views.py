@@ -448,7 +448,6 @@ class RandomBackgroundView(APIView):
 
         id = random.choice(id_list)
         response = requests.get(url=url + id, headers=headers).json()["video_files"]
-        print(response)
         return Response({"background_url": response[0]["link"]})
 
 

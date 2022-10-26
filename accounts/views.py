@@ -9,6 +9,8 @@ from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -32,9 +34,6 @@ LOGIN_CALLBACK_MANAGE_URL = reverse_lazy("kakao-callback")
 
 
 class ProfilePageView(generics.RetrieveUpdateDestroyAPIView):
-    # permission_classes = [
-    #     IsAuthenticated,
-    # ]
 
     lookup_field = "nickname"
 

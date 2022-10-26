@@ -4,6 +4,14 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from plinic.urls import urlpatterns as plinic_urlpatterns
+from accounts.urls import urlpatterns as accounts_urlpatterns
+
+
+swagger_urls = []
+swagger_urls += plinic_urlpatterns
+swagger_urls += accounts_urlpatterns
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -14,6 +22,7 @@ schema_view = get_schema_view(
         license=openapi.License(name="BSD License"),
     ),
     public=True,
+    patterns=swagger_urls,
 )
 
 

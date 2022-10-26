@@ -13,5 +13,8 @@ urlpatterns = [
         views.KakaoLoginView.as_view(),
         name="kakao_login_finish",
     ),
-    path("profiles/<str:nickname>/", views.ProfilePageView.as_view()),
+    path(
+        "profiles/<str:nickname>/",
+        views.ProfilePageView.as_view(),
+    ),
 ]
