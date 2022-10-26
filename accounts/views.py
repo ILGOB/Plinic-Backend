@@ -34,7 +34,7 @@ LOGIN_CALLBACK_MANAGE_URL = reverse_lazy("kakao-callback")
 
 
 class ProfilePageView(generics.RetrieveUpdateDestroyAPIView):
-
+    permission_classes = IsAuthenticated
     lookup_field = "nickname"
 
     def get_queryset(self):
