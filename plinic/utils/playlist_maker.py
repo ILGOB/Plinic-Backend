@@ -30,6 +30,9 @@ def get_random_playlist(genre, num):
             )
             total_url = requests.get(total_url_before_redirect).url
 
+            # http://www.youtube.com/watch_videos?video_ids=Zq44HdAs-Hc,qORaYudQ7Zc,6pA_Tou-DPI
+            # http://www.youtube.com/watch_videos?video_ids=cPAbx5kgCJo,mw5VIEIvuMI,LRs2r6lcHY
+
         except TypeError as e:
             return None
 

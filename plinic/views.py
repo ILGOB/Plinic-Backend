@@ -459,4 +459,14 @@ class RandomThumbnailView(APIView):
         return Response({"img_url": result_url.url})
 
 
-#
+class PlaylistExampleView(APIView):
+    def get(self, request):
+        ids = request.GET["ids"]
+        # nPmIhH775L4,WT_RiibzSj8,7qkSn8bcwFI
+        id_list = ids.split(",")
+        total_url_before_redirect = (
+            "http://www.youtube.com/watch_videos?video_ids=" + ",".join(id_list)
+        )
+        print(total_url_before_redirect)
+        total_url = requests.get(total_url_before_redirect).url
+        return Response({"total_url": total_url})
