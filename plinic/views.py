@@ -3,6 +3,10 @@ from datetime import timedelta
 
 import requests
 from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from drf_yasg import openapi
+from drf_yasg.openapi import TYPE_STRING, TYPE_BOOLEAN, IN_QUERY, IN_PATH, TYPE_NUMBER
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -21,9 +25,54 @@ from .serializers import PostListSerializer, PostDetailSerializer
 from .utils import playlist_maker as pl
 
 
+@method_decorator(
+    name="list",
+    decorator=swagger_auto_schema(
+        tags=["공지사항 API"],
+        operation_summary="공지사항의 목록을 나타냅니다.",
+        manual_parameters=[
+            openapi.Parameter(
+                name="recent",
+                in_=IN_QUERY,
+                type=TYPE_BOOLEAN,
+                required=False,
+                description="공지사항의 최신 게시물을 가져옵니다. 해당 값이 true 인 경우 pagination 을 사용할 수 없습니다.",
+            ),
+        ],
+    ),
+)
+@method_decorator(
+    name="create",
+    decorator=swagger_auto_schema(
+        tags=["공지사항 API"],
+        operation_summary="공지사항을 하나 작성합니다.",
+    ),
+)
+@method_decorator(
+    name="retrieve",
+    decorator=swagger_auto_schema(
+        tags=["공지사항 API"], operation_summary="공지사항의 상세내용을 나타냅니다."
+    ),
+)
+@method_decorator(
+    name="update",
+    decorator=swagger_auto_schema(
+        tags=["공지사항 API"], operation_summary="공지사항의 내용을 수정합니다."
+    ),
+)
+@method_decorator(
+    name="partial_update",
+    decorator=swagger_auto_schema(
+        tags=["공지사항 API"], operation_summary="공지사항의 내용을 수정합니다."
+    ),
+)
+@method_decorator(
+    name="destroy",
+    decorator=swagger_auto_schema(tags=["공지사항 API"], operation_summary="공지사항을 삭제합니다."),
+)
 class NoticeViewSet(ModelViewSet):
     """
-    공지사항을 처리하는 APIView
+    공지사항을 처리하는 APIView 입니다.
 
     공지사항 관련 권한 설정:
         GET     : 로그인된 모든 유저
@@ -89,9 +138,33 @@ class NoticeViewSet(ModelViewSet):
         return super(NoticeViewSet, self).get_serializer_class()
 
 
+@method_decorator(
+    name="list",
+    decorator=swagger_auto_schema(operation_summary="게시물의 목록을 조회합니다."),
+)
+@method_decorator(
+    name="create",
+    decorator=swagger_auto_schema(operation_summary="게시물 한 개를 생성합니다."),
+)
+@method_decorator(
+    name="retrieve",
+    decorator=swagger_auto_schema(operation_summary="게시물의 상세내용을 조회합니다."),
+)
+@method_decorator(
+    name="update",
+    decorator=swagger_auto_schema(operation_summary="게시물의 내용을 수정합니다."),
+)
+@method_decorator(
+    name="partial_update",
+    decorator=swagger_auto_schema(operation_summary="게시물의 내용을 수정합니다."),
+)
+@method_decorator(
+    name="destroy",
+    decorator=swagger_auto_schema(operation_summary="게시물 한 개를 삭제합니다."),
+)
 class PostViewSet(ModelViewSet):
     """
-    게시물을 처리하는 APIView
+    게시물을 처리하는 APIView 입니다.
 
     공지사항 관련 권한 설정:
         GET     : 로그인된 모든 유저
@@ -103,6 +176,7 @@ class PostViewSet(ModelViewSet):
 
     queryset = Post.objects.all().order_by("-pk")
     serializer_class = PostDetailSerializer
+    my_tags = ["게시물 API"]
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -136,7 +210,7 @@ class PostViewSet(ModelViewSet):
 
 class LikeView(APIView):
     """
-    게시물 좋아요/ 좋아요 취소를 처리하는 APIView
+    게시물 좋아요/ 좋아요 취소를 처리하는 APIView 입니다.
 
     게시물 좋아요/ 좋아요 취소 관련 권한 설정:
         PUT     : 로그인 된 모든 유저
@@ -144,6 +218,11 @@ class LikeView(APIView):
 
     """
 
+    my_tags = ["게시물 API"]
+
+    @swagger_auto_schema(
+        operation_summary="특정 게시물에 좋아요를 누릅니다. (게시물 좋아요 유저 목록에 현재 로그인한 유저를 추가합니다.)",
+    )
     def put(self, request, post_id):
         post = Post.objects.get(pk=post_id)
         post.liker_set.add(request.user.profile)
@@ -154,6 +233,9 @@ class LikeView(APIView):
             }
         )
 
+    @swagger_auto_schema(
+        operation_summary="특정 게시물에 좋아요를 취소합니다. (게시물 좋아요 유저 목록에서 현재 로그인한 유저를 삭제합니다.)",
+    )
     def delete(self, request, post_id):
         post = Post.objects.get(pk=post_id)
         post.liker_set.remove(request.user.profile)
@@ -166,6 +248,11 @@ class LikeView(APIView):
 
 
 class GenreListView(APIView):
+    my_tags = ["개발용 API"]
+
+    @swagger_auto_schema(
+        operation_summary="서버에서 허용하는 모든 장르의 리스트를 조회합니다.",
+    )
     def get(self, request):
         genres = Genre.objects.all()
         genre_names = [genre.name for genre in genres]
@@ -174,12 +261,34 @@ class GenreListView(APIView):
 
 class RandomPlayListView(APIView):
     """
-    랜덤 플레이리스트 조회를 처리하는 APIView
+    랜덤 플레이리스트 조회를 처리하는 APIView 입니다.
 
     랜덤 플레이리스트 조회 관련 권한 설정:
         GET     : 로그인된 모든 유저
     """
 
+    my_tags = ["랜덤 조회 API"]
+
+    @swagger_auto_schema(
+        operation_summary="장르와 곡 개수를 입력받아, 그에 맞는 랜덤 플레이리스트를 반환합니다.",
+        manual_parameters=[
+            openapi.Parameter(
+                name="genre",
+                in_=IN_PATH,
+                type=TYPE_NUMBER,
+                required=True,
+                description="조회하고자 하는 플레이리스트의 장르입니다.",
+            ),
+            openapi.Parameter(
+                name="num",
+                in_=IN_PATH,
+                type=TYPE_NUMBER,
+                enum=[list(range(1, 21))],
+                required=True,
+                description="조회하고자 하는 곡 개수입니다.",
+            ),
+        ],
+    )
     def get(self, request):
         if ("genre" not in request.GET) or ("num" not in request.GET):
             # 'genre', 'num' 이 querystring 으로 안 들어오면 에러 메시지 출력
@@ -199,6 +308,8 @@ class RandomPlayListView(APIView):
 
 
 class PlaylistListView(ListAPIView):
+    my_tags = ["플레이리스트 API"]
+
     def get_queryset(self):
         profile = Profile.objects.get(nickname=self.kwargs["nickname"])
         qs = Playlist.objects.filter(profile=profile)
@@ -209,12 +320,14 @@ class PlaylistListView(ListAPIView):
 
 class ScrapView(APIView):
     """
-    특정 플레이리스트의 스크랩, 스크랩 취소를 처리하는 APIView
+    특정 플레이리스트의 스크랩, 스크랩 취소를 처리하는 APIView 입니다.
 
     스크랩에 대한 권한 설정 :
         PUT     : 로그인 된 모든 유저
         DELETE  : 로그인 된 모든 유저
     """
+
+    my_tags = ["플레이리스트 API"]
 
     def put(self, request, playlist_id):
         """플레이리스트를 스크랩 목록에 추가"""
@@ -247,7 +360,90 @@ class ScrapView(APIView):
         )
 
 
+class RandomBackgroundView(APIView):
+    """
+    Plinic 서비스의 맨 처음 화면을 위해서
+    pexels.com 에서 랜덤한 종류의 배경 비디오를 가져옵니다.
+    """
+
+    my_tags = ["랜덤 조회 API"]
+
+    @swagger_auto_schema(operation_summary="pexels.com 에서 랜덤한 종류의 배경 비디오를 가져옵니다.")
+    def get(self, request):
+        id_list = [
+            "3116500",
+            "3116506",
+            "5197762",
+            "2697038",
+            "3211457",
+            "857136",
+            "2962724",
+        ]
+        url = "https://api.pexels.com/videos/videos/"
+        api_key = "563492ad6f91700001000001f4e83ff4703f4a20a5a558a554e11d9f"
+
+        headers = {"Content-type": "application/json", "Authorization": api_key}
+
+        id = random.choice(id_list)
+        response = requests.get(url=url + id, headers=headers).json()["video_files"]
+        return Response({"background_url": response[0]["link"]})
+
+
+class RandomThumbnailView(APIView):
+    """
+    플레이리스트를 저장할 때, 랜덤 썸네일 지정을 위해서
+    unsplash.com 에서 랜덤한 형태의 배경 비디오를 가져옵니다.
+    """
+
+    my_tags = ["랜덤 조회 API"]
+
+    @swagger_auto_schema(operation_summary="unsplash.com 에서 랜덤한 썸네일 이미지를 가져옵니다.")
+    def get(self, request):
+        url = "https://source.unsplash.com/random"
+        result_url = requests.get(url)
+        return Response({"img_url": result_url.url})
+
+
+class PlaylistExampleView(APIView):
+    """
+    유튜브 비디오 id를 받아, 하나의 익명 플레이리스트 링크를 반환합니다.
+    """
+
+    my_tags = ["개발용 API"]
+
+    @swagger_auto_schema(
+        operation_summary="유튜브 동영상의 id를 받아, 익명 플레이리스트의 링크를 반환합니다.",
+        manual_parameters=[
+            openapi.Parameter(
+                name="ids",
+                in_=IN_QUERY,
+                type=TYPE_STRING,
+                required=True,
+                description="유튜브 동영상의 id를 ','(쉼표) 로 구분하여 전송합니다.",
+            ),
+        ],
+    )
+    def get(self, request):
+        ids = request.GET["ids"]
+        id_list = ids.split(",")
+        total_url_before_redirect = (
+            "http://www.youtube.com/watch_videos?video_ids=" + ",".join(id_list)
+        )
+        total_url = requests.get(total_url_before_redirect).url
+        return Response({"total_url": total_url})
+
+
 class DummyDataView(APIView):
+    """
+    개발을 위해서 임의의 Dummy Data 들을 생성합니다.
+    REST 원칙상 PUT 으로 처리하는 것이 맞지만, 편의상 GET 을 사용합니다.
+    """
+
+    my_tags = ["개발용 API"]
+
+    @swagger_auto_schema(
+        operation_summary="개발을 위해서 임의의 Dummy Data 들을 생성합니다. 편의상 PUT 대신 GET 을 사용합니다.",
+    )
     def get(self, request):
         from plinic.models import Genre, Playlist, Track, Post, Tag
         from django.contrib.auth import get_user_model
@@ -428,44 +624,3 @@ class DummyDataView(APIView):
                 new_notice.save()
 
         return HttpResponse("더미 데이터 생성 완료..!")
-
-
-class RandomBackgroundView(APIView):
-    def get(self, request):
-        id_list = [
-            "3116500",
-            "3116506",
-            "5197762",
-            "2697038",
-            "3211457",
-            "857136",
-            "2962724",
-        ]
-        url = "https://api.pexels.com/videos/videos/"
-        api_key = "563492ad6f91700001000001f4e83ff4703f4a20a5a558a554e11d9f"
-
-        headers = {"Content-type": "application/json", "Authorization": api_key}
-
-        id = random.choice(id_list)
-        response = requests.get(url=url + id, headers=headers).json()["video_files"]
-        return Response({"background_url": response[0]["link"]})
-
-
-class RandomThumbnailView(APIView):
-    def get(self, request):
-        url = "https://source.unsplash.com/random"
-        result_url = requests.get(url)
-        return Response({"img_url": result_url.url})
-
-
-class PlaylistExampleView(APIView):
-    def get(self, request):
-        ids = request.GET["ids"]
-        # nPmIhH775L4,WT_RiibzSj8,7qkSn8bcwFI
-        id_list = ids.split(",")
-        total_url_before_redirect = (
-            "http://www.youtube.com/watch_videos?video_ids=" + ",".join(id_list)
-        )
-        print(total_url_before_redirect)
-        total_url = requests.get(total_url_before_redirect).url
-        return Response({"total_url": total_url})

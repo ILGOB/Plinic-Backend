@@ -4,13 +4,13 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
-from plinic.urls import urlpatterns as plinic_urlpatterns
 from accounts.urls import urlpatterns as accounts_urlpatterns
 
 
-swagger_urls = []
-swagger_urls += plinic_urlpatterns
-swagger_urls += accounts_urlpatterns
+swagger_urls = [
+    path("api/v1/plinic/", include("plinic.urls")),
+    path("api/v1/accounts/", include("accounts.urls")),
+]
 
 
 schema_view = get_schema_view(

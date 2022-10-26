@@ -16,8 +16,8 @@ urlpatterns = [
     path("random-thumbnail/", views.RandomThumbnailView.as_view()),
     path("random-playlist/", views.RandomPlayListView.as_view()),
     path("posts/<int:post_id>/likes/", views.LikeView.as_view()),
-    path("playlists/<int:playlist_id>/scrappers/", views.ScrapView.as_view()),
-    path("playlists/<str:nickname>/", views.PlaylistListView.as_view()),
+    # path("playlists/<int:playlist_id>/scrappers/", views.ScrapView.as_view()),
+    # path("playlists/<str:nickname>/", views.PlaylistListView.as_view()),
     path(
         "random-background/",
         views.RandomBackgroundView.as_view(),

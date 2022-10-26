@@ -11,9 +11,9 @@ from django.contrib.auth import get_user_model
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import status, generics
+from rest_framework import status
+from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.reverse import reverse_lazy
 
 from .models import Profile
@@ -33,12 +33,25 @@ LOGIN_FINISH_URL = reverse_lazy("kakao_login_finish")
 LOGIN_CALLBACK_MANAGE_URL = reverse_lazy("kakao-callback")
 
 
-class ProfilePageView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticated,)
-    lookup_field = "nickname"
+@method_decorator(
+    name="get",
+    decorator=swagger_auto_schema(operation_summary="특정 유저의 마이페이지를 조회합니다."),
+)
+@method_decorator(
+    name="patch",
+    decorator=swagger_auto_schema(operation_summary="특정 유저의 프로필 정보를 수정합니다."),
+)
+@method_decorator(
+    name="put",
+    decorator=swagger_auto_schema(operation_summary="특정 유저의 프로필 정보를 수정합니다."),
+)
+class ProfileView(RetrieveUpdateAPIView):
+    """마이페이지 (프로필 페이지) 를 처리하는 APIView 입니다."""
 
-    def get_queryset(self):
-        return Profile.objects.filter(nickname=self.kwargs["nickname"])
+    my_tags = ["마이페이지 API"]
+    permission_classes = (IsAuthenticated,)
+    queryset = Profile.objects.all()
+    lookup_field = "nickname"
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -46,6 +59,8 @@ class ProfilePageView(generics.RetrieveUpdateDestroyAPIView):
         return context
 
     def get_serializer_class(self):
+        if getattr(self, "swagger_fake_view", False):
+            return PublicProfilePageSerializer
         if self.request.user.profile == self.get_object():
             return PrivateProfileSerializer
         return PublicProfilePageSerializer
@@ -143,6 +158,7 @@ def kakao_callback_view(request):
 
 
 class KakaoLoginView(SocialLoginView):
+    schema = None
     adapter_class = KakaoOAuth2Adapter
     client_class = OAuth2Client
     callback_url = KAKAO_CALLBACK_URI

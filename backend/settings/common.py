@@ -128,6 +128,10 @@ REST_FRAMEWORK = {
     ),
 }
 
+SWAGGER_SETTINGS = {
+    "DEFAULT_AUTO_SCHEMA_CLASS": "backend.utils.swagger.ViewSetAutoSchema"
+}
+
 REST_USE_JWT = True
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),

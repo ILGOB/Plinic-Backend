@@ -15,6 +15,6 @@ urlpatterns = [
     ),
     path(
         "profiles/<str:nickname>/",
-        views.ProfilePageView.as_view(),
+        views.ProfileView.as_view(),
     ),
 ]
