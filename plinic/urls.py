@@ -24,4 +24,5 @@ urlpatterns = [
         name="random-background",
     ),
     path("get_dummy_data/", views.DummyDataView.as_view()),
+    # path(""),
 ]

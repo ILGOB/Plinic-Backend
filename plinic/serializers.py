@@ -20,13 +20,13 @@ class TrackSerializer(serializers.ModelSerializer):
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
+    thumbnail_img_url = serializers.SerializerMethodField()
     track_name = serializers.SlugRelatedField(
         many=True, read_only=True, slug_field="title", source="track_set"
     )
     track_set = serializers.PrimaryKeyRelatedField(
         queryset=Track.objects.all(), many=True, write_only=True
     )
-    thumbnail_img_url = serializers.URLField(source="thumbnail")
     total_url = serializers.URLField()
     genre_name = serializers.SlugRelatedField(
         read_only=True, slug_field="name", source="genre"
@@ -61,6 +61,9 @@ class PlaylistSerializer(serializers.ModelSerializer):
 
     def get_scrapper_count(self, obj):
         return obj.scrapper_set.count()
+
+    def get_thumbnail_img_url(self, obj):
+        return obj.thumbnail.url if obj.thumbnail else None
 
 
 class TagSerializer(serializers.ModelSerializer):
