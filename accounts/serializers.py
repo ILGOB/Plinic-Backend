@@ -5,7 +5,8 @@ from .models import Profile
 
 
 class ProfilePageSerializerMixin(serializers.ModelSerializer):
-    profile_img = serializers.SerializerMethodField()
+    profile_img_url = serializers.SerializerMethodField()
+    profile_img_file = serializers.ImageField(write_only=True, source="profile_pic")
     written_posts = serializers.SerializerMethodField()
     public_playlists = serializers.SerializerMethodField()
     scrapped_playlists = serializers.SerializerMethodField()
@@ -16,7 +17,7 @@ class ProfilePageSerializerMixin(serializers.ModelSerializer):
         many=True,
     )
 
-    def get_profile_img(self, obj):
+    def get_profile_img_url(self, obj):
         return (
             obj.profile_pic.url
             if obj.profile_pic
@@ -63,7 +64,8 @@ class PublicProfilePageSerializer(ProfilePageSerializerMixin):
         model = Profile
         fields = [
             "nickname",
-            "profile_img",
+            "profile_img_url",  # for read-only
+            "profile_img_file",  # for write-only
             "public_playlists",
             "scrapped_playlists",
             "written_posts",
@@ -86,7 +88,8 @@ class PrivateProfileSerializer(ProfilePageSerializerMixin):
         model = Profile
         fields = [
             "nickname",
-            "profile_img",
+            "profile_img_url",  # for read-only
+            "profile_img_file",  # for write-only
             "public_playlists",
             "private_playlists",
             "scrapped_playlists",
