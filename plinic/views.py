@@ -321,8 +321,7 @@ class PlaylistListView(RetrieveAPIView):
     my_tags = ["플레이리스트 API"]
 
     def get_queryset(self):
-        profile = Profile.objects.get(id=self.kwargs["pk"])
-        qs = Playlist.objects.filter(profile=profile)
+        qs = Playlist.objects.filter(id=self.kwargs["pk"])
         return qs
 
     serializer_class = PlaylistSerializer
