@@ -10,6 +10,7 @@ notice_router.register("notices", views.NoticeViewSet)
 
 
 urlpatterns = [
+    path("", views.IntegrationResearchView.as_view()),
     path("", include(post_router.urls)),
     path("", include(notice_router.urls)),
     path("genres/", views.GenreListView.as_view()),
@@ -17,7 +18,7 @@ urlpatterns = [
     path("random-playlist/", views.RandomPlayListView.as_view()),
     path("posts/<int:post_id>/likes/", views.LikeView.as_view()),
     # path("playlists/<int:playlist_id>/scrappers/", views.ScrapView.as_view()),
-    # path("playlists/<str:nickname>/", views.PlaylistListView.as_view()),
+    path("playlists/<int:pk>/", views.PlaylistListView.as_view()),
     path(
         "random-background/",
         views.RandomBackgroundView.as_view(),

@@ -4,11 +4,13 @@ from datetime import timedelta
 import requests
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg import openapi
 from drf_yasg.openapi import TYPE_STRING, TYPE_BOOLEAN, IN_QUERY, IN_PATH, TYPE_NUMBER
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.generics import ListAPIView
+from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -23,6 +25,14 @@ from .serializers import (
 )
 from .serializers import PostListSerializer, PostDetailSerializer
 from .utils import playlist_maker as pl
+
+
+class IntegrationResearchView(APIView):
+    def get(self, request):
+        if self.request.GET:
+            query = self.request.GET
+            print(query)
+            return Response("...")
 
 
 @method_decorator(
@@ -307,11 +317,11 @@ class RandomPlayListView(APIView):
                 return Response(json_val)
 
 
-class PlaylistListView(ListAPIView):
+class PlaylistListView(RetrieveAPIView):
     my_tags = ["플레이리스트 API"]
 
     def get_queryset(self):
-        profile = Profile.objects.get(nickname=self.kwargs["nickname"])
+        profile = Profile.objects.get(id=self.kwargs["pk"])
         qs = Playlist.objects.filter(profile=profile)
         return qs
 

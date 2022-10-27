@@ -37,3 +37,4 @@ djangorestframework-simplejwt
 django-allauth
 dj-rest-auth
 drf-yasg
+django-filter
