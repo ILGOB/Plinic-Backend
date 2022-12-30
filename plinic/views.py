@@ -27,12 +27,12 @@ from .serializers import PostListSerializer, PostDetailSerializer
 from .utils import playlist_maker as pl
 
 
-class IntegrationResearchView(APIView):
-    def get(self, request):
-        if self.request.GET:
-            query = self.request.GET
-            print(query)
-            return Response("...")
+# class IntegrationResearchView(APIView):
+#     def get(self, request):
+#         if self.request.GET:
+#             query = self.request.GET
+#             print(query)
+#             return Response("...")
 
 
 @method_decorator(

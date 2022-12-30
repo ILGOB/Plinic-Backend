@@ -5,7 +5,10 @@ from .models import Genre, Post, Notice, Playlist, Tag, Track
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    pass
+    list_display = ["profile", "title"]
+    list_display_links = ["title"]
+    search_fields = ["title"]
+    list_filter = ["tag_set"]
 
 
 @admin.register(Notice)

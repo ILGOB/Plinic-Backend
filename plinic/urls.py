@@ -10,7 +10,7 @@ notice_router.register("notices", views.NoticeViewSet)
 
 
 urlpatterns = [
-    path("", views.IntegrationResearchView.as_view()),
+    # path("", views.IntegrationResearchView.as_view()),
     path("", include(post_router.urls)),
     path("", include(notice_router.urls)),
     path("genres/", views.GenreListView.as_view()),
